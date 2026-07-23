@@ -1,7 +1,7 @@
 import { transactionType } from '../../data';
 import {
   Min,
-  IsDate,
+  IsDateString,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -32,7 +32,7 @@ export class CreateTransactionDto {
   @IsOptional()
   description: string;
 
-  @IsDate()
+  @IsDateString()
   @IsOptional()
-  createdAt: Date;
+  createdAt: string;
 }

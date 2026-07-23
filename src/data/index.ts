@@ -33,7 +33,7 @@ interface Transaction {
   type: transactionType;
   amount: number;
   description: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 interface Account {
@@ -42,7 +42,7 @@ interface Account {
   name: string;
   type: accountType;
   balance: number;
-  createdAt: Date;
+  createdAt: string;
 }
 
 interface User {
@@ -51,7 +51,7 @@ interface User {
   email: string;
   password: string;
   role: role;
-  createdAt: Date;
+  createdAt: string;
 }
 
 type MockData = {
@@ -80,7 +80,7 @@ export const mockData: MockData = {
       type: transactionType.DEPOSIT,
       amount: 7500000.0,
       description: 'Gaji PT Tech Nusantara',
-      createdAt: new Date('2026-06-25 09:00:00'),
+      createdAt: new Date('2026-06-25 09:00:00').toISOString(),
     },
     {
       id: 2,
@@ -89,7 +89,7 @@ export const mockData: MockData = {
       type: transactionType.WITHDRAWAL,
       amount: 450000.0,
       description: 'Bayar Listrik & Internet',
-      createdAt: new Date('2026-06-26 10:30:00'),
+      createdAt: new Date('2026-06-26 10:30:00').toISOString(),
     },
     {
       id: 3,
@@ -98,7 +98,7 @@ export const mockData: MockData = {
       type: transactionType.WITHDRAWAL,
       amount: 45000.0,
       description: 'Beli Kopi Susu',
-      createdAt: new Date('2026-06-26 15:20:00'),
+      createdAt: new Date('2026-06-26 15:20:00').toISOString(),
     },
     {
       id: 4,
@@ -107,7 +107,7 @@ export const mockData: MockData = {
       type: transactionType.WITHDRAWAL,
       amount: 200000.0,
       description: 'Isi Bensin Mobil',
-      createdAt: new Date('2026-06-28 08:00:00'),
+      createdAt: new Date('2026-06-28 08:00:00').toISOString(),
     },
     {
       id: 5,
@@ -116,7 +116,7 @@ export const mockData: MockData = {
       type: transactionType.TRANSFER,
       amount: 85000.0,
       description: 'Makan Siang Nasi Padang',
-      createdAt: new Date('2026-06-29 12:15:00'),
+      createdAt: new Date('2026-06-29 12:15:00').toISOString(),
     },
     {
       id: 6,
@@ -125,7 +125,7 @@ export const mockData: MockData = {
       type: transactionType.WITHDRAWAL,
       amount: 120000.0,
       description: 'Tiket Bioskop Weekend',
-      createdAt: new Date('2026-07-04 19:00:00'),
+      createdAt: new Date('2026-07-04 19:00:00').toISOString(),
     },
     {
       id: 7,
@@ -134,7 +134,7 @@ export const mockData: MockData = {
       type: transactionType.WITHDRAWAL,
       amount: 1150000.0,
       description: 'Belanja Bulanan Supermarket',
-      createdAt: new Date('2026-07-05 11:00:00'),
+      createdAt: new Date('2026-07-05 11:00:00').toISOString(),
     },
   ],
   accounts: [
@@ -144,7 +144,7 @@ export const mockData: MockData = {
       name: 'BCA Personal',
       type: accountType.BANK,
       balance: 5450000.0,
-      createdAt: new Date('2026-05-01 08:30:00'),
+      createdAt: new Date('2026-05-01 08:30:00').toISOString(),
     },
     {
       id: 2,
@@ -152,7 +152,7 @@ export const mockData: MockData = {
       name: 'GoPay Rian',
       type: accountType.E_WALLET,
       balance: 350000.0,
-      createdAt: new Date('2026-05-01 08:45:00'),
+      createdAt: new Date('2026-05-01 08:45:00').toISOString(),
     },
     {
       id: 3,
@@ -160,7 +160,7 @@ export const mockData: MockData = {
       name: 'Mandiri Utama',
       type: accountType.BANK,
       balance: 12150000.0,
-      createdAt: new Date('2026-05-03 09:30:00'),
+      createdAt: new Date('2026-05-03 09:30:00').toISOString(),
     },
     {
       id: 4,
@@ -168,7 +168,7 @@ export const mockData: MockData = {
       name: 'Dompet Tunai',
       type: accountType.CASH,
       balance: 450000.0,
-      createdAt: new Date('2026-05-03 09:40:00'),
+      createdAt: new Date('2026-05-03 09:40:00').toISOString(),
     },
     {
       id: 5,
@@ -176,7 +176,7 @@ export const mockData: MockData = {
       name: 'BNI Bisnis',
       type: accountType.BANK,
       balance: 27300000.0,
-      createdAt: new Date('2026-05-01 07:45:00'),
+      createdAt: new Date('2026-05-01 07:45:00').toISOString(),
     },
     {
       id: 6,
@@ -184,7 +184,7 @@ export const mockData: MockData = {
       name: 'OVO Budi',
       type: accountType.E_WALLET,
       balance: 850000.0,
-      createdAt: new Date('2026-05-01 07:50:00'),
+      createdAt: new Date('2026-05-01 07:50:00').toISOString(),
     },
   ],
   users: [
@@ -194,7 +194,7 @@ export const mockData: MockData = {
       email: 'rian.wijaya@email.com',
       password: 'rian123',
       role: role.USER,
-      createdAt: new Date('2026-05-01 08:00:00'),
+      createdAt: new Date('2026-05-01 08:00:00').toISOString(),
     },
     {
       id: 2,
@@ -202,7 +202,7 @@ export const mockData: MockData = {
       email: 'siti.aminah@email.com',
       password: 'siti456',
       role: role.USER,
-      createdAt: new Date('2026-05-03 09:15:00'),
+      createdAt: new Date('2026-05-03 09:15:00').toISOString(),
     },
     {
       id: 3,
@@ -210,7 +210,7 @@ export const mockData: MockData = {
       email: 'budi.admin@email.com',
       password: 'budi789',
       role: role.ADMIN,
-      createdAt: new Date('2026-05-01 07:30:00'),
+      createdAt: new Date('2026-05-01 07:30:00').toISOString(),
     },
   ],
 };

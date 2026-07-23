@@ -19,7 +19,7 @@ export class AccountsRepository {
     const newData: CreateAccountDto = {
       ...data,
       id: mockData.accounts.length + 1,
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     };
 
     mockData.accounts.push(newData);

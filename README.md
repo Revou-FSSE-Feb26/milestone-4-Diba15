@@ -55,6 +55,8 @@ Dokumentasi singkat kolom dan tipe berdasarkan src/data/index.ts
 
 ### Endpoints
 
+![Endpoints](img_1.png)
+
 - Categories (prefix /categories)
     - POST /categories — body: CreateCategoryDto
     - GET /categories

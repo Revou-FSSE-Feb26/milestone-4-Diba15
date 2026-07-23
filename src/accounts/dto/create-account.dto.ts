@@ -4,7 +4,7 @@ import {
   IsOptional,
   IsString,
   IsEnum,
-  IsDate,
+  IsDateString,
 } from 'class-validator';
 import { accountType } from '../../data';
 
@@ -28,7 +28,7 @@ export class CreateAccountDto {
   @IsNotEmpty()
   balance: number;
 
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
-  createdAt: Date;
+  createdAt: string;
 }

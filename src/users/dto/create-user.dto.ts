@@ -1,5 +1,5 @@
 import {
-  IsDate,
+  IsDateString,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -27,7 +27,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   role: role;
 
-  @IsDate()
-  @IsOptional()
-  createdAt: Date;
+  @IsDateString()
+  @IsNotEmpty()
+  createdAt: string;
 }

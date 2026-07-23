@@ -19,7 +19,7 @@ export class TransactionsRepository {
     const newData = {
       ...createTransactionDto,
       id: mockData.transactions.length + 1,
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     };
 
     mockData.transactions.push(newData);
