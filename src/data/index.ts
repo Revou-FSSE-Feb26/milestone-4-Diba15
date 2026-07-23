@@ -20,9 +20,50 @@ export enum transactionType {
   TRANSFER = 'transfer',
 }
 
+interface Category {
+  id: number;
+  name: string;
+  type: categoryType;
+}
+
+interface Transaction {
+  id: number;
+  accountId: number;
+  categoryId: number;
+  type: transactionType;
+  amount: number;
+  description: string;
+  createdAt: Date;
+}
+
+interface Account {
+  id: number;
+  userId: number;
+  name: string;
+  type: accountType;
+  balance: number;
+  createdAt: Date;
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  role: role;
+  createdAt: Date;
+}
+
+type MockData = {
+  categories: Category[];
+  transactions: Transaction[];
+  accounts: Account[];
+  users: User[];
+};
+
 // Mock Data
 
-export const mockData = {
+export const mockData: MockData = {
   categories: [
     { id: 1, name: 'Gaji Bulanan', type: categoryType.INCOME },
     { id: 2, name: 'Pendapatan Freelance', type: categoryType.INCOME },
@@ -36,64 +77,64 @@ export const mockData = {
       id: 1,
       accountId: 1,
       categoryId: 1,
-      type: categoryType.INCOME,
+      type: transactionType.DEPOSIT,
       amount: 7500000.0,
       description: 'Gaji PT Tech Nusantara',
-      createdAt: '2026-06-25 09:00:00',
+      createdAt: new Date('2026-06-25 09:00:00'),
     },
     {
       id: 2,
       accountId: 1,
       categoryId: 5,
-      type: categoryType.EXPENSE,
+      type: transactionType.WITHDRAWAL,
       amount: 450000.0,
       description: 'Bayar Listrik & Internet',
-      createdAt: '2026-06-26 10:30:00',
+      createdAt: new Date('2026-06-26 10:30:00'),
     },
     {
       id: 3,
       accountId: 2,
       categoryId: 3,
-      type: categoryType.EXPENSE,
+      type: transactionType.WITHDRAWAL,
       amount: 45000.0,
       description: 'Beli Kopi Susu',
-      createdAt: '2026-06-26 15:20:00',
+      createdAt: new Date('2026-06-26 15:20:00'),
     },
     {
       id: 4,
       accountId: 1,
       categoryId: 4,
-      type: categoryType.EXPENSE,
+      type: transactionType.WITHDRAWAL,
       amount: 200000.0,
       description: 'Isi Bensin Mobil',
-      createdAt: '2026-06-28 08:00:00',
+      createdAt: new Date('2026-06-28 08:00:00'),
     },
     {
       id: 5,
       accountId: 2,
       categoryId: 3,
-      type: categoryType.EXPENSE,
+      type: transactionType.TRANSFER,
       amount: 85000.0,
       description: 'Makan Siang Nasi Padang',
-      createdAt: '2026-06-29 12:15:00',
+      createdAt: new Date('2026-06-29 12:15:00'),
     },
     {
       id: 6,
       accountId: 2,
       categoryId: 6,
-      type: categoryType.EXPENSE,
+      type: transactionType.WITHDRAWAL,
       amount: 120000.0,
       description: 'Tiket Bioskop Weekend',
-      createdAt: '2026-07-04 19:00:00',
+      createdAt: new Date('2026-07-04 19:00:00'),
     },
     {
       id: 7,
       accountId: 1,
       categoryId: 3,
-      type: categoryType.EXPENSE,
+      type: transactionType.WITHDRAWAL,
       amount: 1150000.0,
       description: 'Belanja Bulanan Supermarket',
-      createdAt: '2026-07-05 11:00:00',
+      createdAt: new Date('2026-07-05 11:00:00'),
     },
   ],
   accounts: [
@@ -103,7 +144,7 @@ export const mockData = {
       name: 'BCA Personal',
       type: accountType.BANK,
       balance: 5450000.0,
-      createdAt: '2026-05-01 08:30:00',
+      createdAt: new Date('2026-05-01 08:30:00'),
     },
     {
       id: 2,
@@ -111,7 +152,7 @@ export const mockData = {
       name: 'GoPay Rian',
       type: accountType.E_WALLET,
       balance: 350000.0,
-      createdAt: '2026-05-01 08:45:00',
+      createdAt: new Date('2026-05-01 08:45:00'),
     },
     {
       id: 3,
@@ -119,7 +160,7 @@ export const mockData = {
       name: 'Mandiri Utama',
       type: accountType.BANK,
       balance: 12150000.0,
-      createdAt: '2026-05-03 09:30:00',
+      createdAt: new Date('2026-05-03 09:30:00'),
     },
     {
       id: 4,
@@ -127,7 +168,7 @@ export const mockData = {
       name: 'Dompet Tunai',
       type: accountType.CASH,
       balance: 450000.0,
-      createdAt: '2026-05-03 09:40:00',
+      createdAt: new Date('2026-05-03 09:40:00'),
     },
     {
       id: 5,
@@ -135,7 +176,7 @@ export const mockData = {
       name: 'BNI Bisnis',
       type: accountType.BANK,
       balance: 27300000.0,
-      createdAt: '2026-05-01 07:45:00',
+      createdAt: new Date('2026-05-01 07:45:00'),
     },
     {
       id: 6,
@@ -143,7 +184,7 @@ export const mockData = {
       name: 'OVO Budi',
       type: accountType.E_WALLET,
       balance: 850000.0,
-      createdAt: '2026-05-01 07:50:00',
+      createdAt: new Date('2026-05-01 07:50:00'),
     },
   ],
   users: [
@@ -153,7 +194,7 @@ export const mockData = {
       email: 'rian.wijaya@email.com',
       password: 'rian123',
       role: role.USER,
-      createdAt: '2026-05-01 08:00:00',
+      createdAt: new Date('2026-05-01 08:00:00'),
     },
     {
       id: 2,
@@ -161,7 +202,7 @@ export const mockData = {
       email: 'siti.aminah@email.com',
       password: 'siti456',
       role: role.USER,
-      createdAt: '2026-05-03 09:15:00',
+      createdAt: new Date('2026-05-03 09:15:00'),
     },
     {
       id: 3,
@@ -169,7 +210,7 @@ export const mockData = {
       email: 'budi.admin@email.com',
       password: 'budi789',
       role: role.ADMIN,
-      createdAt: '2026-05-01 07:30:00',
+      createdAt: new Date('2026-05-01 07:30:00'),
     },
   ],
 };

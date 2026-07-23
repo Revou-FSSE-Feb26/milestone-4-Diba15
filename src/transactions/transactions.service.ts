@@ -1,27 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { mockData } from '../data';
-import type { CreateTransactionDto } from './dto/create-transaction.dto';
-import type { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { TransactionsRepository } from './transactions.repository';
 
 @Injectable()
 export class TransactionsService {
+  constructor(
+    private readonly transactionsRepository: TransactionsRepository,
+  ) {}
   create(createTransactionDto: CreateTransactionDto) {
-    return 'This action adds a new transaction';
+    return this.transactionsRepository.create(createTransactionDto);
   }
 
   findAll() {
-    return mockData.transactions;
+    return this.transactionsRepository.findAll();
   }
 
   findOne(id: number) {
-    return mockData.transactions.find((t) => t.id === id);
+    return this.transactionsRepository.findOne(id);
   }
 
   update(id: number, updateTransactionDto: UpdateTransactionDto) {
-    return 'This action updates a transaction';
+    return this.transactionsRepository.update(id, updateTransactionDto);
   }
 
   remove(id: number) {
-    return 'This action removes a transaction';
+    return this.transactionsRepository.remove(id);
   }
 }
