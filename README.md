@@ -8,6 +8,7 @@ Dokumentasi backend untuk milestone 4 berisi categories, transactions, accounts,
 
 ```bash
 pnpm install
+pnpm dlx prisma migrate dev
 pnpm run start:dev
 ```
 
