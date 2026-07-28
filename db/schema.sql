@@ -20,7 +20,7 @@ CREATE TABLE accounts (
     user_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     type account_type NOT NULL,
-    balance NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
+    balance NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_account_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE -- Menggunakan CASCADE untuk menghapus akun saat pengguna dihapus
 );
@@ -39,7 +39,7 @@ CREATE TABLE transactions (
     account_id INT NOT NULL,
     category_id INT NOT NULL,
     type transaction_type NOT NULL,
-    amount NUMERIC(15, 2) NOT NULL,
+    amount NUMERIC(12, 2) NOT NULL,
     description TEXT,
     transaction_date TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

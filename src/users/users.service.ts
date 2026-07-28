@@ -11,15 +11,15 @@ export class UsersService {
     return this.usersRepository.create(createUserDto);
   }
 
-  findAll(): CreateUserDto[] {
+  findAll() {
     return this.usersRepository.findAll();
   }
 
-  findOne(id: number): CreateUserDto {
+  findOne(id: number) {
     return this.usersRepository.findOne(id);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto): UpdateUserDto {
+  update(id: number, updateUserDto: UpdateUserDto) {
     return this.usersRepository.update(id, updateUserDto);
   }
 

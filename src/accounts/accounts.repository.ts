@@ -1,51 +1,45 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { mockData } from '../data';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AccountsRepository {
-  findAll(): CreateAccountDto[] {
-    return mockData.accounts;
+  constructor(private prisma: PrismaService) {}
+
+  async findAll() {
+    return this.prisma.account.findMany();
   }
 
-  findOne(id: number): CreateAccountDto {
-    return mockData.accounts.find(
-      (account) => account.id === id,
-    ) as CreateAccountDto;
+  async findOne(id: number) {
+    return this.prisma.account.findUnique({
+      where: { id },
+    });
   }
 
-  create(data: CreateAccountDto): CreateAccountDto {
-    const newData: CreateAccountDto = {
-      ...data,
-      id: mockData.accounts.length + 1,
-      createdAt: new Date().toISOString(),
-    };
-
-    mockData.accounts.push(newData);
-    return newData;
+  async create(createAccountDto: CreateAccountDto) {
+    return this.prisma.account.create({
+      data: createAccountDto,
+    });
   }
 
-  update(id: number, updateData: UpdateAccountDto): UpdateAccountDto {
-    const currentData = this.findOne(id);
+  async update(id: number, updateAccountDto: UpdateAccountDto) {
+    const account = await this.findOne(id);
 
-    if (!currentData) throw new NotFoundException('Account not found');
-
-    const updatedData = { ...currentData, ...updateData };
-    mockData.accounts = mockData.accounts.map((account) =>
-      account.id === id ? updatedData : account,
-    );
-    return updatedData;
-  }
-
-  remove(id: number) {
-    const account = this.findOne(id);
     if (!account) throw new NotFoundException('Account not found');
-    mockData.accounts = mockData.accounts.filter((a) => a.id !== id);
 
-    return {
-      message: 'Account deleted successfully',
-      account,
-    };
+    return this.prisma.account.update({
+      where: { id },
+      data: updateAccountDto,
+    });
+  }
+
+  async remove(id: number) {
+    const account = await this.findOne(id);
+    if (!account) throw new NotFoundException('Account not found');
+
+    return this.prisma.account.delete({
+      where: { id },
+    });
   }
 }

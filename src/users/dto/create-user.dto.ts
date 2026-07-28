@@ -5,7 +5,7 @@ import {
   IsString,
   IsEnum,
 } from 'class-validator';
-import { role } from '../../data';
+import { Role } from '../../generated/prisma/enums';
 
 export class CreateUserDto {
   @IsOptional()
@@ -23,9 +23,9 @@ export class CreateUserDto {
   @IsOptional()
   password: string;
 
-  @IsEnum(role)
+  @IsEnum(Role)
   @IsNotEmpty()
-  role: role;
+  role: Role;
 
   @IsDateString()
   @IsNotEmpty()

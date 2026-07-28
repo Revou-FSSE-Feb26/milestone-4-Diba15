@@ -1,52 +1,50 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { mockData } from '../data';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class CategoriesRepository {
-  findAll(): CreateCategoryDto[] {
-    return mockData.categories;
+  constructor(private prisma: PrismaService) {}
+
+  async findAll() {
+    return this.prisma.category.findMany();
   }
 
-  findOne(id: number): CreateCategoryDto {
-    return mockData.categories.find(
-      (category) => category.id === id,
-    ) as CreateCategoryDto;
+  async findOne(id: number) {
+    return this.prisma.category.findUnique({
+      where: { id },
+    });
   }
 
-  create(createCategoryDto: CreateCategoryDto): CreateCategoryDto {
-    const newData: CreateCategoryDto = {
-      ...createCategoryDto,
-      id: mockData.categories.length + 1,
-    };
-    mockData.categories.push(newData);
-    return newData;
+  async create(createCategoryDto: CreateCategoryDto) {
+    return this.prisma.category.create({
+      data: createCategoryDto,
+    });
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto): UpdateCategoryDto {
-    const currentData = this.findOne(id);
+  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+    const category = await this.findOne(id);
 
-    if (!currentData) throw new NotFoundException('Category not found');
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
 
-    const updatedData = { ...currentData, ...updateCategoryDto };
-    mockData.categories = mockData.categories.map((category) =>
-      category.id === id ? updatedData : category,
-    );
-    return updatedData;
+    return this.prisma.category.update({
+      where: { id },
+      data: updateCategoryDto,
+    });
   }
 
-  remove(id: number) {
-    const categoryToRemove = this.findOne(id);
+  async remove(id: number) {
+    const category = await this.findOne(id);
 
-    if (!categoryToRemove) throw new NotFoundException('Category not found');
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
 
-    mockData.categories = mockData.categories.filter(
-      (category) => category.id !== id,
-    );
-    return {
-      message: 'Category deleted successfully',
-      categoryToRemove,
-    };
+    return this.prisma.category.delete({
+      where: { id },
+    });
   }
 }

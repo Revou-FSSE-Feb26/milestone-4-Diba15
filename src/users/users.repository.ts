@@ -1,44 +1,50 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { mockData } from '../data';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UsersRepository {
-  findAll(): CreateUserDto[] {
-    return mockData.users;
+  constructor(private prisma: PrismaService) {}
+
+  async findAll() {
+    return this.prisma.user.findMany();
   }
 
-  findOne(id: number): CreateUserDto {
-    return mockData.users.find((user) => user.id === id) as CreateUserDto;
+  async findOne(id: number) {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
   }
 
-  create(createUserDto: CreateUserDto): CreateUserDto {
-    const newUser = { ...createUserDto, id: mockData.users.length + 1 };
-    mockData.users.push(newUser);
-    return newUser;
+  async create(createUserDto: CreateUserDto) {
+    return this.prisma.user.create({
+      data: createUserDto,
+    });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto): UpdateUserDto {
-    const currentData = this.findOne(id);
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.findOne(id);
 
-    if (!currentData) throw new NotFoundException('User not found');
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
-    const updatedData = { ...currentData, ...updateUserDto };
-    mockData.users = mockData.users.map((user) =>
-      user.id === id ? updatedData : user,
-    );
-    return updatedData;
+    return this.prisma.user.update({
+      where: { id },
+      data: updateUserDto,
+    });
   }
 
-  remove(id: number) {
-    const currentData = this.findOne(id);
-    if (!currentData) throw new NotFoundException('User not found');
+  async remove(id: number) {
+    const user = await this.findOne(id);
 
-    mockData.users = mockData.users.filter((user) => user.id !== id);
-    return {
-      message: 'User deleted successfully',
-      currentData,
-    };
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return this.prisma.user.delete({
+      where: { id },
+    });
   }
 }

@@ -6,7 +6,7 @@ import {
   IsEnum,
   IsDateString,
 } from 'class-validator';
-import { accountType } from '../../data';
+import { AccountType } from '../../generated/prisma/enums';
 
 export class CreateAccountDto {
   @IsOptional()
@@ -20,9 +20,9 @@ export class CreateAccountDto {
   @IsNotEmpty()
   name: string;
 
-  @IsEnum(accountType)
+  @IsEnum(AccountType)
   @IsNotEmpty()
-  type: accountType;
+  type: AccountType;
 
   @IsNumber()
   @IsNotEmpty()

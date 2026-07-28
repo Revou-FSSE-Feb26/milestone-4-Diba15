@@ -1,5 +1,5 @@
-import { categoryType } from '../../data';
 import { IsEnum, IsOptional, IsString, IsNotEmpty } from 'class-validator';
+import { CategoryType } from '../../generated/prisma/enums';
 
 export class CreateCategoryDto {
   @IsOptional()
@@ -9,7 +9,7 @@ export class CreateCategoryDto {
   @IsNotEmpty()
   name: string;
 
-  @IsEnum(categoryType)
+  @IsEnum(CategoryType)
   @IsNotEmpty()
-  type: categoryType;
+  type: CategoryType;
 }
