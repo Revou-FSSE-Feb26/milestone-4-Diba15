@@ -14,15 +14,15 @@ Dokumentasi singkat kolom dan tipe berdasarkan src/data/index.ts
 
 ### Transactions
 
-| Field       |            Type | Notes                               |
-|-------------|----------------:|-------------------------------------|
-| id          |          number | unique                              |
-| accountId   |          number | FK ke Account.id                    |
-| categoryId  |          number | FK ke Category.id                   |
-| type        | transactionType | enum: deposit, withdrawal, transfer |
-| amount      |          number | jumlah desimal                      |
-| description |          string |                                     |
-| createdAt   |            Date | timestamp                           |
+| Field       |            Type | Notes                           |
+|-------------|----------------:|---------------------------------|
+| id          |          number | unique                          |
+| accountId   |          number | FK ke Account.id                |
+| categoryId  |          number | FK ke Category.id               |
+| type        | transactionType | enum: income, expense, transfer |
+| amount      |          number | jumlah desimal                  |
+| description |          string |                                 |
+| createdAt   |            Date | timestamp                       |
 
 ### Accounts
 
@@ -51,7 +51,7 @@ Dokumentasi singkat kolom dan tipe berdasarkan src/data/index.ts
 - role: admin, user
 - accountType: cash, bank, e-wallet
 - categoryType: income, expense
-- transactionType: deposit, withdrawal, transfer
+- transactionType: income, expense, transfer
 
 ### Endpoints
 
