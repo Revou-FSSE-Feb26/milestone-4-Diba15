@@ -13,14 +13,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/api/accounts",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/accounts",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "accounts"
           ]
         }
@@ -33,14 +30,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/api/accounts/1",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/accounts/1",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "accounts",
             "1"
           ]
@@ -68,14 +62,11 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/accounts",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/accounts",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "accounts"
           ]
         }
@@ -102,14 +93,11 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/accounts/1",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/accounts/1",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "accounts",
             "1"
           ]
@@ -123,14 +111,11 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/api/accounts/2",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/accounts/2",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "accounts",
             "2"
           ]
@@ -144,14 +129,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/api/categories",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/categories",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "categories"
           ]
         }
@@ -164,14 +146,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/api/categories/1",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/categories/1",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "categories",
             "1"
           ]
@@ -199,14 +178,11 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/categories",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/categories",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "categories"
           ]
         }
@@ -233,14 +209,11 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/categories/1",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/categories/1",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "categories",
             "1"
           ]
@@ -254,14 +227,11 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/api/categories/2",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/categories/2",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "categories",
             "2"
           ]
@@ -275,14 +245,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/api/transactions",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/transactions",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "transactions"
           ]
         }
@@ -295,14 +262,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/api/transactions/1",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/transactions/1",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "transactions",
             "1"
           ]
@@ -330,14 +294,11 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/transactions",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/transactions",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "transactions"
           ]
         }
@@ -364,14 +325,11 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/transactions/1",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/transactions/1",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "transactions",
             "1"
           ]
@@ -385,14 +343,11 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/api/transactions/2",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/transactions/2",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "transactions",
             "2"
           ]
@@ -406,14 +361,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/api/users",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/users",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "users"
           ]
         }
@@ -426,14 +378,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/api/users/1",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/users/1",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "users",
             "1"
           ]
@@ -461,14 +410,11 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/users",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/users",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "users"
           ]
         }
@@ -495,14 +441,11 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/users/1",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/users/1",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "users",
             "1"
           ]
@@ -516,20 +459,47 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/api/users/2",
-          "protocol": "http",
+          "raw": "{{deploy-link}}/users/2",
           "host": [
-            "localhost"
+            "{{deploy-link}}"
           ],
-          "port": "3000",
           "path": [
-            "api",
             "users",
             "2"
           ]
         }
       },
       "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "deploy-link",
+      "value": "https://milestone-4-diba15-production.up.railway.app/api"
     }
   ]
 }
