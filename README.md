@@ -11,6 +11,10 @@ pnpm install
 pnpm run start:dev
 ```
 
+### Deployed Backend
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://milestone-4-diba15-production.up.railway.app/)
+
 ### Categories
 
 | Field |         Type | Notes                 |
