@@ -18,7 +18,7 @@ pnpm run start:dev
 
 ### API Documentation
 
-[![Swagger](https://img.shields.io/badge/Swagger-2.0-blue)](https://milestone-4-diba15-production.up.railway.app/api)
+[![Swagger](https://img.shields.io/badge/Swagger-2.0-blue)](https://milestone-4-diba15-production.up.railway.app/docs)
 
 ### Categories
 
