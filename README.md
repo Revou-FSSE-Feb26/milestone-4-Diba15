@@ -16,6 +16,10 @@ pnpm run start:dev
 
 [![Deploy on Railway](https://railway.com/button.svg)](https://milestone-4-diba15-production.up.railway.app/)
 
+### API Documentation
+
+[![Swagger](https://img.shields.io/badge/Swagger-2.0-blue)](https://milestone-4-diba15-production.up.railway.app/api)
+
 ### Categories
 
 | Field |         Type | Notes                 |
