@@ -5,21 +5,32 @@ import { Role } from '../../generated/prisma/enums';
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: 'mas arif', description: 'Name of user' })
   name: string;
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'mas.arif@example.com',
+    description: 'Email of user',
+  })
   email: string;
 
   @IsString()
   @IsOptional()
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    required: false,
+    example: 'password123',
+    description: 'Password of user',
+  })
   password: string;
 
   @IsEnum(Role)
   @IsNotEmpty()
-  @ApiProperty({ enum: Role })
+  @ApiProperty({
+    enum: Role,
+    example: Role.USER,
+    description: 'Role of user',
+  })
   role: Role;
 }
