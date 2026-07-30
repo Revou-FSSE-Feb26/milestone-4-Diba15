@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -21,29 +17,16 @@ export class TransactionsRepository {
     });
   }
 
-  async create(createTransactionDto: CreateTransactionDto) {
-    const account = await this.prisma.account.findUnique({
-      where: { id: createTransactionDto.accountId },
+  getAccountBalance(id: number) {
+    return this.prisma.account.findUnique({
+      where: { id },
+      select: { balance: true },
     });
+  }
 
-    if (!account) {
-      throw new NotFoundException('Account not found');
-    }
-
-    // Pengubahan saldo dari desimal ke number untuk perbandingan
-    const balance: number = Number(account.balance ?? 0);
-
-    // Cek saldo untuk tipe pengeluaran
-    if (
-      (createTransactionDto.type === 'EXPENSE' ||
-        createTransactionDto.type === 'TRANSFER') &&
-      balance < createTransactionDto.amount
-    ) {
-      throw new BadRequestException('Insufficient funds');
-    }
-
+  create(createTransactionDto: CreateTransactionDto) {
     if (createTransactionDto.type === 'INCOME') {
-      return await this.prisma.$transaction([
+      return this.prisma.$transaction([
         this.prisma.transaction.create({ data: createTransactionDto }),
         this.prisma.account.update({
           where: { id: createTransactionDto.accountId },
@@ -52,8 +35,7 @@ export class TransactionsRepository {
       ]);
     }
 
-    // Default return untuk pengeluaran
-    return await this.prisma.$transaction([
+    return this.prisma.$transaction([
       this.prisma.transaction.create({ data: createTransactionDto }),
       this.prisma.account.update({
         where: { id: createTransactionDto.accountId },
@@ -62,68 +44,41 @@ export class TransactionsRepository {
     ]);
   }
 
-  async update(id: number, updateTransactionDto: UpdateTransactionDto) {
-    const transaction = await this.findOne(id);
-
-    if (!transaction) {
-      throw new NotFoundException('Transaction not found');
-    }
-
-    // Transaksi untuk pemasukan
-    if (transaction.type === 'INCOME') {
-      return await this.prisma.$transaction([
-        this.prisma.transaction.update({
-          where: { id },
-          data: updateTransactionDto,
-        }),
-        this.prisma.account.update({
-          where: { id: transaction.accountId },
-          data: { balance: { increment: updateTransactionDto.amount ?? 0 } },
-        }),
-      ]);
-    }
-
-    // Transaksi untuk pengeluaran
-    return await this.prisma.$transaction([
+  async update(
+    id: number,
+    updateTransactionDto: UpdateTransactionDto,
+    balanceChange: number,
+  ) {
+    return this.prisma.$transaction([
       this.prisma.transaction.update({
         where: { id },
         data: updateTransactionDto,
       }),
       this.prisma.account.update({
-        where: { id: transaction.accountId },
-        data: { balance: { decrement: updateTransactionDto.amount ?? 0 } },
+        where: { id: updateTransactionDto.accountId },
+        data: {
+          balance:
+            balanceChange > 0
+              ? { increment: balanceChange }
+              : { decrement: Math.abs(balanceChange) },
+        },
       }),
     ]);
   }
 
-  async remove(id: number) {
-    const transaction = await this.findOne(id);
-
-    if (!transaction) {
-      throw new NotFoundException('Transaction not found');
-    }
-
-    // Transaksi untuk pemasukan
-    if (transaction.type === 'INCOME') {
-      return await this.prisma.$transaction([
-        this.prisma.transaction.delete({
-          where: { id },
-        }),
-        this.prisma.account.update({
-          where: { id: transaction.accountId },
-          data: { balance: { decrement: transaction.amount } },
-        }),
-      ]);
-    }
-
-    // Transaksi untuk pengeluaran
-    return await this.prisma.$transaction([
+  async remove(id: number, accountId: number, balanceChange: number) {
+    return this.prisma.$transaction([
       this.prisma.transaction.delete({
         where: { id },
       }),
       this.prisma.account.update({
-        where: { id: transaction.accountId },
-        data: { balance: { increment: transaction.amount } },
+        where: { id: accountId },
+        data: {
+          balance:
+            balanceChange > 0
+              ? { increment: balanceChange }
+              : { decrement: Math.abs(balanceChange) },
+        },
       }),
     ]);
   }

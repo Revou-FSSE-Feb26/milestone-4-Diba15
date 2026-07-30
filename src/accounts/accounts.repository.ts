@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -7,37 +7,40 @@ import { PrismaService } from '../prisma/prisma.service';
 export class AccountsRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findAll() {
+  findAll() {
     return this.prisma.account.findMany();
   }
 
-  async findOne(id: number) {
+  findOne(id: number) {
     return this.prisma.account.findUnique({
       where: { id },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+        transactions: true,
+      },
     });
   }
 
-  async create(createAccountDto: CreateAccountDto) {
+  create(createAccountDto: CreateAccountDto) {
     return this.prisma.account.create({
       data: createAccountDto,
     });
   }
 
-  async update(id: number, updateAccountDto: UpdateAccountDto) {
-    const account = await this.findOne(id);
-
-    if (!account) throw new NotFoundException('Account not found');
-
+  update(id: number, updateAccountDto: UpdateAccountDto) {
     return this.prisma.account.update({
       where: { id },
       data: updateAccountDto,
     });
   }
 
-  async remove(id: number) {
-    const account = await this.findOne(id);
-    if (!account) throw new NotFoundException('Account not found');
-
+  remove(id: number) {
     return this.prisma.account.delete({
       where: { id },
     });

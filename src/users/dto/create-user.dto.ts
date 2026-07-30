@@ -1,18 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsDateString,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsEnum,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsEnum } from 'class-validator';
 import { Role } from '../../generated/prisma/enums';
 
 export class CreateUserDto {
-  @IsOptional()
-  @ApiProperty({ required: false })
-  id: number;
-
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
@@ -32,9 +22,4 @@ export class CreateUserDto {
   @IsNotEmpty()
   @ApiProperty({ enum: Role })
   role: Role;
-
-  @IsDateString()
-  @IsNotEmpty()
-  @ApiProperty()
-  createdAt: string;
 }

@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
@@ -21,14 +25,11 @@ export class UsersService {
       createUserDto.password,
       10,
     );
-    const user = await this.usersRepository.create({
+
+    return await this.usersRepository.create({
       ...createUserDto,
       password: hashedPassword,
     });
-
-    const { password, ...result } = user;
-
-    return result;
   }
 
   findAll() {
@@ -39,11 +40,23 @@ export class UsersService {
     return this.usersRepository.findOne(id);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.findOne(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     return this.usersRepository.update(id, updateUserDto);
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const user = await this.findOne(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     return this.usersRepository.remove(id);
   }
 }

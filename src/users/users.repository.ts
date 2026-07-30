@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -7,50 +7,70 @@ import { PrismaService } from '../prisma/prisma.service';
 export class UsersRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findByEmail(email: string) {
+  findByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email },
     });
   }
 
-  async findAll() {
-    return this.prisma.user.findMany();
+  findAll() {
+    return this.prisma.user.findMany({
+      select: {
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
+    });
   }
 
-  async findOne(id: number) {
+  findOne(id: number) {
     return this.prisma.user.findUnique({
       where: { id },
+      select: {
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        accounts: true,
+      },
     });
   }
 
-  async create(createUserDto: CreateUserDto) {
+  create(createUserDto: CreateUserDto) {
     return this.prisma.user.create({
       data: createUserDto,
+      select: {
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
     });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.findOne(id);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
+  update(id: number, updateUserDto: UpdateUserDto) {
     return this.prisma.user.update({
       where: { id },
       data: updateUserDto,
+      select: {
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
     });
   }
 
-  async remove(id: number) {
-    const user = await this.findOne(id);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
+  remove(id: number) {
     return this.prisma.user.delete({
       where: { id },
+      select: {
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
     });
   }
 }
