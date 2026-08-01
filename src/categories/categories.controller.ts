@@ -54,12 +54,37 @@ export class CategoriesController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: ''})
+  @ApiOperation({ summary: 'Find category by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Category by ID',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Category not found',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.categoriesService.findOne(+id);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Update Category' })
+  @ApiResponse({
+    status: 200,
+    description: 'Category updated',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Category not found',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
@@ -68,6 +93,19 @@ export class CategoriesController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete Category' })
+  @ApiResponse({
+    status: 200,
+    description: 'Category deleted',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Category not found',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.categoriesService.remove(+id);
   }
