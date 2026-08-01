@@ -1,25 +1,40 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString, IsEnum } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsEnum, Min } from 'class-validator';
 import { AccountType } from '../../generated/prisma/enums';
 
 export class CreateAccountDto {
   @IsNumber()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: 1,
+    description: 'ID of user',
+  })
   userId: number;
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'My Account',
+    description: 'Name of account',
+  })
   name: string;
 
   @IsEnum(AccountType)
   @IsNotEmpty()
-  @ApiProperty({ enum: AccountType })
+  @ApiProperty({
+    enum: AccountType,
+    example: AccountType.BANK,
+    description: 'Type of account',
+  })
   type: AccountType;
 
   @IsNumber()
   @IsNotEmpty()
-  @ApiProperty()
+  @Min(1)
+  @ApiProperty({
+    example: 1000,
+    description: 'Balance of account',
+    minimum: 1,
+  })
   balance: number;
 }

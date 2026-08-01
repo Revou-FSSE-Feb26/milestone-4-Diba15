@@ -27,7 +27,11 @@ export class CreateTransactionDto {
 
   @IsNumber()
   @Min(0)
-  @ApiProperty()
+  @ApiProperty({
+    example: 100,
+    description: 'Amount of transaction',
+    minimum: 1,
+  })
   amount: number;
 
   @IsString()
