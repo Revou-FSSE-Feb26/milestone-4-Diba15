@@ -12,12 +12,10 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  findByEmail(email: string) {
-    return this.usersRepository.findByEmail(email);
-  }
-
   async create(createUserDto: CreateUserDto) {
-    const existUser = await this.findByEmail(createUserDto.email);
+    const existUser = await this.usersRepository.findByEmail(
+      createUserDto.email,
+    );
 
     if (existUser) throw new ConflictException('User already exists');
 
@@ -36,16 +34,18 @@ export class UsersService {
     return this.usersRepository.findAll();
   }
 
-  findOne(id: number) {
-    return this.usersRepository.findOne(id);
+  async findOne(id: number) {
+    const findUser = await this.usersRepository.findOne(id);
+
+    if (!findUser) throw new NotFoundException(`User #${id} not found`);
+
+    return findUser;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
 
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    if (!user) throw new NotFoundException('User not found');
 
     return this.usersRepository.update(id, updateUserDto);
   }
@@ -53,9 +53,7 @@ export class UsersService {
   async remove(id: number) {
     const user = await this.findOne(id);
 
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    if (!user) throw new NotFoundException('User not found');
 
     return this.usersRepository.remove(id);
   }

@@ -22,9 +22,7 @@ export class TransactionsService {
       createTransactionDto.accountId,
     );
 
-    if (!accountBalance) {
-      throw new NotFoundException('Account not found');
-    }
+    if (!accountBalance) throw new NotFoundException('Account not found');
 
     const balance: number = Number(accountBalance.balance ?? 0);
 
@@ -43,16 +41,20 @@ export class TransactionsService {
     return this.transactionsRepository.findAll();
   }
 
-  findOne(id: number) {
-    return this.transactionsRepository.findOne(id);
+  async findOne(id: number) {
+    const findTransaction = await this.transactionsRepository.findOne(id);
+
+    if (!findTransaction)
+      throw new NotFoundException(`Transaction #${id} not found`);
+
+    return findTransaction;
   }
 
   async update(id: number, updateTransactionDto: UpdateTransactionDto) {
     const transaction = await this.findOne(id);
 
-    if (!transaction) {
-      throw new NotFoundException('Transaction not found');
-    }
+    if (!transaction)
+      throw new NotFoundException(`Transaction #${id} not found`);
 
     // Hitung perubahan saldo berdasarkan tipe transaksi
     const oldAmount = Number(transaction.amount ?? 0);
@@ -76,9 +78,8 @@ export class TransactionsService {
   async remove(id: number) {
     const transaction = await this.findOne(id);
 
-    if (!transaction) {
-      throw new NotFoundException('Transaction not found');
-    }
+    if (!transaction)
+      throw new NotFoundException(`Transaction #${id} not found`);
 
     // Reverse operasi: INCOME dikurangi, EXPENSE ditambah
     const amount = Number(transaction.amount ?? 0);

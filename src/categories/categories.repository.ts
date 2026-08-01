@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -24,12 +24,6 @@ export class CategoriesRepository {
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    const category = await this.findOne(id);
-
-    if (!category) {
-      throw new NotFoundException('Category not found');
-    }
-
     return this.prisma.category.update({
       where: { id },
       data: updateCategoryDto,
@@ -37,12 +31,6 @@ export class CategoriesRepository {
   }
 
   async remove(id: number) {
-    const category = await this.findOne(id);
-
-    if (!category) {
-      throw new NotFoundException('Category not found');
-    }
-
     return this.prisma.category.delete({
       where: { id },
     });

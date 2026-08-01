@@ -15,14 +15,18 @@ export class AccountsService {
     return this.accountsRepository.findAll();
   }
 
-  findOne(id: number) {
-    return this.accountsRepository.findOne(id);
+  async findOne(id: number) {
+    const findAcc = await this.accountsRepository.findOne(id);
+
+    if (!findAcc) throw new NotFoundException(`Account #${id} not found`);
+
+    return findAcc;
   }
 
   async update(id: number, updateAccountDto: UpdateAccountDto) {
     const account = await this.findOne(id);
 
-    if (!account) throw new NotFoundException('Account not found');
+    if (!account) throw new NotFoundException(`Account #${id} not found`);
 
     return this.accountsRepository.update(id, updateAccountDto);
   }
@@ -30,7 +34,7 @@ export class AccountsService {
   async remove(id: number) {
     const account = await this.findOne(id);
 
-    if (!account) throw new NotFoundException('Account not found');
+    if (!account) throw new NotFoundException(`Account #${id} not found`);
 
     return this.accountsRepository.remove(id);
   }
