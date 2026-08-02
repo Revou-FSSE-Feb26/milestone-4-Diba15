@@ -1,475 +1,4099 @@
 {
   "info": {
     "_postman_id": "c4896c69-f7ed-4770-86f2-605f88ec6441",
-    "name": "Milestone 4 — 2",
+    "name": "Fintrack",
+    "description": "## Milestone 4 - Fintrack\n\nThis collection covers the core REST API endpoints for a personal finance management application. It provides full **CRUD** (Create, Read, Update, Delete) operations across four primary resources:\n\n- **Users** — Manage user accounts: list all users, retrieve a user by ID, create, update, and delete users.\n    \n- **Accounts** — Handle financial accounts (e.g. bank accounts): list all accounts, retrieve by ID, create, update, and delete accounts.\n    \n- **Categories** — Organize transaction categories: list all categories, retrieve by ID, create, update, and delete categories.\n    \n- **Transactions** — Track financial transactions: list all transactions, retrieve by ID, create, update, and delete transactions.\n    \n\n### Base URL\n\nAll requests use the `{{deploy-link}}` environment variable as the base URL. Make sure this variable is set to the correct deployment URL in your active environment before sending requests.\n\n### Endpoints Summary\n\n| Resource | GET All | GET by ID | POST | PATCH | DELETE |\n| --- | --- | --- | --- | --- | --- |\n| Users | `GET /users` | `GET /users/1` | `POST /users` | `PATCH /users/1` | `DELETE /users/2` |\n| Accounts | `GET /accounts` | `GET /accounts/1` | `POST /accounts` | `PATCH /accounts/1` | `DELETE /accounts/2` |\n| Categories | `GET /categories` | `GET /categories/1` | `POST /categories` | `PATCH /categories/1` | `DELETE /categories/2` |\n| Transactions | `GET /transactions` | `GET /transactions/1` | `POST /transactions` | `PATCH /transactions/1` | `DELETE /transactions/2` |",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "10974026",
     "_collection_link": "https://go.postman.co/collection/10974026-c4896c69-f7ed-4770-86f2-605f88ec6441?source=collection_link"
   },
   "item": [
     {
-      "name": "AllAccounts",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{deploy-link}}/accounts",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "accounts"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "ByIdAccount",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{deploy-link}}/accounts/1",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "accounts",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "PostAccount",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"userId\": 1,\n  \"name\": \"BCA Personal\",\n  \"type\": \"BANK\",\n  \"balance\": 5450000,\n  \"createdAt\": \"2026-05-01T01:30:00.000Z\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+      "name": "Users",
+      "item": [
+        {
+          "name": "PostUser",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 or 200', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([",
+                  "        200,",
+                  "        201",
+                  "    ]);",
+                  "})",
+                  "",
+                  "pm.test('Response time is less than 3000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "})",
+                  "",
+                  "pm.test('Response body is not empty', function () {",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;",
+                  "})",
+                  "",
+                  "pm.test('Content-Type is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             }
-          }
-        },
-        "url": {
-          "raw": "{{deploy-link}}/accounts",
-          "host": [
-            "{{deploy-link}}"
           ],
-          "path": [
-            "accounts"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "PatchAccount",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"BCA Updated\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": {{baseId}},\n    \"name\": \"Johny Doe 99\",\n    \"email\": \"john2@example.com\",\n    \"password\": \"password123\",\n    \"role\": \"USER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{deploy-link}}/users",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "users"
+              ]
             }
-          }
-        },
-        "url": {
-          "raw": "{{deploy-link}}/accounts/1",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "accounts",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "DeleteAccount",
-      "request": {
-        "method": "DELETE",
-        "header": [],
-        "url": {
-          "raw": "{{deploy-link}}/accounts/2",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "accounts",
-            "2"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "AllCategories",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{deploy-link}}/categories",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "categories"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "ByIdCategory",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{deploy-link}}/categories/1",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "categories",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "PostCategory",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"Gaji Utama\",\n  \"type\": \"INCOME\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Johny Doe\",\n  \"email\": \"john2@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"USER\",\n  \"createdAt\": \"2026-05-01T01:30:00.000Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/users",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
             }
-          }
-        },
-        "url": {
-          "raw": "{{deploy-link}}/categories",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "categories"
           ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "PatchCategory",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"Gaji Bulanan\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+        },
+        {
+          "name": "AllUsers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// 1. Memastikan request berhasil",
+                  "pm.test(\"Status code adalah 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Data John Doe (ID 99) ditemukan di dalam daftar\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var arrayData = jsonData; // Sesuaikan lagi jika perlu",
+                  "    ",
+                  "    // Cari berdasarkan properti yang ADA di response (misal: name, email, dll)",
+                  "    let isDataExist = arrayData.some(function(item) {",
+                  "        return item.name === \"Johny Doe 99\"; // Ubah 'name' dengan key yang sesuai",
+                  "    });",
+                  "    ",
+                  "    pm.expect(isDataExist, \"Data yang dicari tidak ditemukan\").to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             }
-          }
-        },
-        "url": {
-          "raw": "{{deploy-link}}/categories/1",
-          "host": [
-            "{{deploy-link}}"
           ],
-          "path": [
-            "categories",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "DeleteCategory",
-      "request": {
-        "method": "DELETE",
-        "header": [],
-        "url": {
-          "raw": "{{deploy-link}}/categories/2",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "categories",
-            "2"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "AllTransactions",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{deploy-link}}/transactions",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "transactions"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "ByIdTransaction",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{deploy-link}}/transactions/1",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "transactions",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "PostTransaction",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"accountId\": 1,\n  \"categoryId\": 1,\n  \"type\": \"EXPENSE\",\n  \"amount\": 500000,\n  \"description\": \"Setoran awal\",\n  \"createdAt\": \"2026-05-01T01:30:00.000Z\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{deploy-link}}/users",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "users"
+              ]
             }
-          }
-        },
-        "url": {
-          "raw": "{{deploy-link}}/transactions",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "transactions"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "PatchTransaction",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"amount\": 600000,\n  \"description\": \"Revisi setoran awal\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/users",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
             }
-          }
+          ]
         },
-        "url": {
-          "raw": "{{deploy-link}}/transactions/1",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "transactions",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "DeleteTransaction",
-      "request": {
-        "method": "DELETE",
-        "header": [],
-        "url": {
-          "raw": "{{deploy-link}}/transactions/2",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "transactions",
-            "2"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "AllUsers",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{deploy-link}}/users",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "users"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "ByIdUser",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{deploy-link}}/users/1",
-          "host": [
-            "{{deploy-link}}"
-          ],
-          "path": [
-            "users",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "PostUser",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"Johny Doe\",\n  \"email\": \"john2@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"USER\",\n  \"createdAt\": \"2026-05-01T01:30:00.000Z\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+        {
+          "name": "ByIdUser",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// 1. Memastikan request berhasil",
+                  "pm.test(\"Status code adalah 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             }
-          }
-        },
-        "url": {
-          "raw": "{{deploy-link}}/users",
-          "host": [
-            "{{deploy-link}}"
           ],
-          "path": [
-            "users"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "PatchUser",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"John Doe Updated\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{deploy-link}}/users/{{baseId}}",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "users",
+                "{{baseId}}"
+              ]
             }
-          }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{local-link}}/users/1",
+                  "host": [
+                    "{{local-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "1"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
         },
-        "url": {
-          "raw": "{{deploy-link}}/users/1",
-          "host": [
-            "{{deploy-link}}"
+        {
+          "name": "PatchUser",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response time is less than 3000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "})",
+                  "",
+                  "pm.test('Response body is not empty', function () {",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;",
+                  "})",
+                  "",
+                  "pm.test('Content-Type is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
           ],
-          "path": [
-            "users",
-            "1"
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated 99 ID User\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{deploy-link}}/users/{{baseId}}",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "users",
+                "{{baseId}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"John Doe Updated\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/users/1",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "1"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            },
+            {
+              "name": "User Not Found",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"John Doe Updated\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/users/99",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "99"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "DeleteUser",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([",
+                  "        200,",
+                  "        204",
+                  "    ]);",
+                  "})",
+                  "",
+                  "pm.test('Response time is less than 3000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{deploy-link}}/users/{{baseId}}",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "users",
+                "{{baseId}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/users/2",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "2"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            },
+            {
+              "name": "User Not Found",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{local-link}}/users/99",
+                  "host": [
+                    "{{local-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "99"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
           ]
         }
-      },
-      "response": []
+      ]
     },
     {
-      "name": "DeleteUser",
-      "request": {
-        "method": "DELETE",
-        "header": [],
-        "url": {
-          "raw": "{{deploy-link}}/users/2",
-          "host": [
-            "{{deploy-link}}"
+      "name": "Accounts",
+      "item": [
+        {
+          "name": "PostAccount",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 or 200', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([",
+                  "        200,",
+                  "        201",
+                  "    ]);",
+                  "})",
+                  "",
+                  "pm.test('Response time is less than 3000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "})",
+                  "",
+                  "pm.test('Response body is not empty', function () {",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;",
+                  "})",
+                  "",
+                  "pm.test('Content-Type is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
           ],
-          "path": [
-            "users",
-            "2"
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": {{baseId}},\r\n  \"userId\": {{baseId}},\r\n  \"name\": \"DANA 99\",\r\n  \"type\": \"E_WALLET\",\r\n  \"balance\": 1000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{deploy-link}}/accounts",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "accounts"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": 1,\n  \"name\": \"Mandiri Savings\",\n  \"type\": \"BANK\",\n  \"balance\": 1000000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/accounts",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": 3,\n  \"userId\": 1,\n  \"name\": \"Mandiri Savings\",\n  \"type\": \"BANK\",\n  \"balance\": \"1000000.00\",\n  \"createdAt\": \"2024-01-15T10:00:00.000Z\",\n  \"updatedAt\": \"2024-01-15T10:00:00.000Z\"\n}"
+            },
+            {
+              "name": "Error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": 1,\n  \"name\": \"BCA Personal\",\n  \"type\": \"BANK\",\n  \"createdAt\": \"2026-05-01T01:30:00.000Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/accounts",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "AllAccounts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test(\"Data Dana 99 found\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var arrayData = jsonData;",
+                  "    ",
+                  "    // Cari berdasarkan properti yang ADA di response (misal: name, email, dll)",
+                  "    let isDataExist = arrayData.some(function(item) {",
+                  "        return item.name === \"DANA 99\"; // Ubah 'name' dengan key yang sesuai",
+                  "    });",
+                  "    ",
+                  "    pm.expect(isDataExist, \"Data yang dicari tidak ditemukan\").to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{deploy-link}}/accounts",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "accounts"
+              ]
+            },
+            "description": "## AllAccounts\n\nRetrieves a list of all accounts associated with the authenticated user.\n\n### Request Details\n\n- **Method:** `GET`\n    \n- **Endpoint:** `{{deploy-link}}/accounts`\n    \n\nThe base URL is dynamically resolved using the `{{deploy-link}}` environment variable, which should be set to the appropriate deployment URL in the active environment.\n\n### Response\n\nReturns a JSON array of account objects. Each object includes the following fields:\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `id` | number | Unique account identifier |\n| `userId` | number | ID of the owning user |\n| `name` | string | Display name of the account (e.g. `\"BCA Personal\"`) |\n| `type` | string | Account type (e.g. `\"BANK\"`) |\n| `balance` | string | Current account balance |\n| `createdAt` | string | ISO 8601 timestamp of account creation |\n| `updatedAt` | string | ISO 8601 timestamp of last update |\n\n### Test Scripts\n\nThe following automated tests are included and run after each response:\n\n- ✅ **Status code is 200** — Asserts the response returns an HTTP `200 OK` status.\n    \n- ⚡ **Response time is less than 3000ms** — Ensures the API responds within 3 seconds.\n    \n- 📦 **Response body is not empty** — Verifies the response body contains data.\n    \n- 🗂️ **Content-Type is JSON** — Confirms the response header includes `application/json`."
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{local-link}}/accounts",
+                  "host": [
+                    "{{local-link}}"
+                  ],
+                  "path": [
+                    "accounts"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "[\n  {\n    \"id\": 1,\n    \"userId\": 1,\n    \"name\": \"BCA Personal\",\n    \"type\": \"BANK\",\n    \"balance\": \"5000000.00\",\n    \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n    \"updatedAt\": \"2024-01-10T08:00:00.000Z\"\n  },\n  {\n    \"id\": 2,\n    \"userId\": 1,\n    \"name\": \"OVO Wallet\",\n    \"type\": \"E_WALLET\",\n    \"balance\": \"250000.00\",\n    \"createdAt\": \"2024-01-11T09:00:00.000Z\",\n    \"updatedAt\": \"2024-01-11T09:00:00.000Z\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "ByIdAccount",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{local-link}}/accounts/1",
+              "host": [
+                "{{local-link}}"
+              ],
+              "path": [
+                "accounts",
+                "1"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{local-link}}/accounts/1",
+                  "host": [
+                    "{{local-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "1"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"id\": 1,\n  \"userId\": 1,\n  \"name\": \"BCA Personal\",\n  \"type\": \"BANK\",\n  \"balance\": \"5000000.00\",\n  \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n  \"updatedAt\": \"2024-01-10T08:00:00.000Z\"\n}"
+            },
+            {
+              "name": "Account Not Found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{local-link}}/accounts/99",
+                  "host": [
+                    "{{local-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "99"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n  \"message\": \"Account not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "PatchAccount",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response time is less than 3000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "})",
+                  "",
+                  "pm.test('Response body is not empty', function () {",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;",
+                  "})",
+                  "",
+                  "pm.test('Content-Type is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Edit 99\",\n  \"balance\": 10000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{deploy-link}}/accounts/{{baseId}}",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "accounts",
+                "{{baseId}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"BCA Main Account\",\n  \"balance\": 7500000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local-link}}/accounts/1",
+                  "host": [
+                    "{{local-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "1"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": 1,\n  \"userId\": 1,\n  \"name\": \"BCA Main Account\",\n  \"type\": \"BANK\",\n  \"balance\": \"7500000.00\",\n  \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n  \"updatedAt\": \"2024-01-16T11:00:00.000Z\"\n}"
+            },
+            {
+              "name": "Account Not Found",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"BCA Main Account\",\n  \"balance\": 7500000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local-link}}/accounts/1",
+                  "host": [
+                    "{{local-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "1"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Account not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "DeleteAccount",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([",
+                  "        200,",
+                  "        204",
+                  "    ]);",
+                  "})",
+                  "",
+                  "pm.test('Response time is less than 3000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{deploy-link}}/accounts/{{baseId}}",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "accounts",
+                "{{baseId}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/accounts/2",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "2"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Account deleted successfully\"\n}"
+            },
+            {
+              "name": "Account Not Found",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/accounts/2",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "2"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Account not found\"\n}"
+            }
           ]
         }
-      },
-      "response": []
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "PostCategory",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 or 200', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([",
+                  "        200,",
+                  "        201",
+                  "    ]);",
+                  "})",
+                  "",
+                  "pm.test('Response time is less than 3000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "})",
+                  "",
+                  "pm.test('Response body is not empty', function () {",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;",
+                  "})",
+                  "",
+                  "pm.test('Content-Type is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{baseId}},\n  \"name\": \"Bonus 99\",\n  \"type\": \"INCOME\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{deploy-link}}/categories",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": 1,\n  \"name\": \"Entertainment\",\n  \"type\": \"EXPENSE\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/categories",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": 4,\n  \"userId\": 1,\n  \"name\": \"Entertainment\",\n  \"type\": \"EXPENSE\",\n  \"createdAt\": \"2024-01-15T10:00:00.000Z\",\n  \"updatedAt\": \"2024-01-15T10:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "AllCategories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test(\"category found\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var arrayData = jsonData; // Sesuaikan lagi jika perlu",
+                  "    ",
+                  "    // Cari berdasarkan properti yang ADA di response (misal: name, email, dll)",
+                  "    let isDataExist = arrayData.some(function(item) {",
+                  "        return item.name === \"Bonus 99\"; // Ubah 'name' dengan key yang sesuai",
+                  "    });",
+                  "    ",
+                  "    pm.expect(isDataExist, \"Data yang dicari tidak ditemukan\").to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{deploy-link}}/categories",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/categories",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "[\n  {\n    \"id\": 1,\n    \"userId\": 1,\n    \"name\": \"Food & Beverage\",\n    \"type\": \"EXPENSE\",\n    \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n    \"updatedAt\": \"2024-01-10T08:00:00.000Z\"\n  },\n  {\n    \"id\": 2,\n    \"userId\": 1,\n    \"name\": \"Salary\",\n    \"type\": \"INCOME\",\n    \"createdAt\": \"2024-01-10T08:30:00.000Z\",\n    \"updatedAt\": \"2024-01-10T08:30:00.000Z\"\n  },\n  {\n    \"id\": 3,\n    \"userId\": 1,\n    \"name\": \"Transportation\",\n    \"type\": \"EXPENSE\",\n    \"createdAt\": \"2024-01-10T09:00:00.000Z\",\n    \"updatedAt\": \"2024-01-10T09:00:00.000Z\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "ByIdCategory",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{deploy-link}}/categories/1",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "categories",
+                "1"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/categories/1",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "1"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"id\": 1,\n  \"userId\": 1,\n  \"name\": \"Food & Beverage\",\n  \"type\": \"EXPENSE\",\n  \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n  \"updatedAt\": \"2024-01-10T08:00:00.000Z\"\n}"
+            },
+            {
+              "name": "Category Not Found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/categories/1",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "1"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Category not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "PatchCategory",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response time is less than 3000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "})",
+                  "",
+                  "pm.test('Response body is not empty', function () {",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;",
+                  "})",
+                  "",
+                  "pm.test('Content-Type is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Edit 99\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{deploy-link}}/categories/{{baseId}}",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "categories",
+                "{{baseId}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Food & Drinks\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/categories/1",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "1"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": 1,\n  \"userId\": 1,\n  \"name\": \"Food & Drinks\",\n  \"type\": \"EXPENSE\",\n  \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n  \"updatedAt\": \"2024-01-16T11:00:00.000Z\"\n}"
+            },
+            {
+              "name": "Category Not Found",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Food & Drinks\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/categories/1",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "1"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Category not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "DeleteCategory",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([",
+                  "        200,",
+                  "        204",
+                  "    ]);",
+                  "})",
+                  "",
+                  "pm.test('Response time is less than 3000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{deploy-link}}/categories/{{baseId}}",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "categories",
+                "{{baseId}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/categories/2",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "2"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Category deleted successfully\"\n}"
+            },
+            {
+              "name": "Category Not Found",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/categories/2",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "2"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Category not found\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "PostTransaction",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 or 200', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([",
+                  "        200,",
+                  "        201",
+                  "    ]);",
+                  "})",
+                  "",
+                  "pm.test('Response time is less than 3000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "})",
+                  "",
+                  "pm.test('Response body is not empty', function () {",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;",
+                  "})",
+                  "",
+                  "pm.test('Content-Type is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{baseId}},\n  \"accountId\": {{baseId}},\n  \"categoryId\": {{baseId}},\n  \"type\": \"EXPENSE\",\n  \"amount\": 50,\n  \"description\": \"Setoran awal 99\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{deploy-link}}/transactions",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "transactions"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"accountId\": 1,\n  \"categoryId\": 1,\n  \"type\": \"EXPENSE\",\n  \"amount\": 1,\n  \"description\": \"Setoran awal\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local-link}}/transactions",
+                  "host": [
+                    "{{local-link}}"
+                  ],
+                  "path": [
+                    "transactions"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            },
+            {
+              "name": "Account Not Found",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"accountId\": 1,\n  \"categoryId\": 1,\n  \"type\": \"EXPENSE\",\n  \"amount\": 500000,\n  \"description\": \"Setoran awal\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local-link}}/transactions",
+                  "host": [
+                    "{{local-link}}"
+                  ],
+                  "path": [
+                    "transactions"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "AllTransactions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test(\"Transaction found\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var arrayData = jsonData; // Sesuaikan lagi jika perlu",
+                  "    ",
+                  "    // Cari berdasarkan properti yang ADA di response (misal: name, email, dll)",
+                  "    let isDataExist = arrayData.some(function(item) {",
+                  "        return item.description === \"Setoran awal 99\";",
+                  "    });",
+                  "    ",
+                  "    pm.expect(isDataExist, \"Data yang dicari tidak ditemukan\").to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{deploy-link}}/transactions",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "transactions"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/transactions",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "[\n  {\n    \"id\": 1,\n    \"accountId\": 1,\n    \"categoryId\": 1,\n    \"amount\": \"50000.00\",\n    \"type\": \"EXPENSE\",\n    \"description\": \"Lunch at restaurant\",\n    \"date\": \"2024-01-15T12:00:00.000Z\",\n    \"createdAt\": \"2024-01-15T12:05:00.000Z\",\n    \"updatedAt\": \"2024-01-15T12:05:00.000Z\"\n  },\n  {\n    \"id\": 2,\n    \"accountId\": 1,\n    \"categoryId\": 2,\n    \"amount\": \"5000000.00\",\n    \"type\": \"INCOME\",\n    \"description\": \"Monthly salary\",\n    \"date\": \"2024-01-01T08:00:00.000Z\",\n    \"createdAt\": \"2024-01-01T08:05:00.000Z\",\n    \"updatedAt\": \"2024-01-01T08:05:00.000Z\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "ByIdTransaction",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{deploy-link}}/transactions/{{baseId}}",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "transactions",
+                "{{baseId}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/transactions/1",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "1"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"id\": 1,\n  \"accountId\": 1,\n  \"categoryId\": 1,\n  \"amount\": \"50000.00\",\n  \"type\": \"EXPENSE\",\n  \"description\": \"Lunch at restaurant\",\n  \"date\": \"2024-01-15T12:00:00.000Z\",\n  \"createdAt\": \"2024-01-15T12:05:00.000Z\",\n  \"updatedAt\": \"2024-01-15T12:05:00.000Z\"\n}"
+            },
+            {
+              "name": "Transaction Not Found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/transactions/1",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "1"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Transaction not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "PatchTransaction",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response time is less than 3000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "})",
+                  "",
+                  "pm.test('Response body is not empty', function () {",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;",
+                  "})",
+                  "",
+                  "pm.test('Content-Type is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 2000,\n  \"description\": \"Revisi setoran awal\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{deploy-link}}/transactions/{{baseId}}",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "transactions",
+                "{{baseId}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"description\": \"Lunch at cafe\",\n  \"amount\": 75000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local-link}}/transactions/1",
+                  "host": [
+                    "{{local-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "1"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": 1,\n  \"accountId\": 1,\n  \"categoryId\": 1,\n  \"amount\": \"75000.00\",\n  \"type\": \"EXPENSE\",\n  \"description\": \"Lunch at cafe\",\n  \"date\": \"2024-01-15T12:00:00.000Z\",\n  \"createdAt\": \"2024-01-15T12:05:00.000Z\",\n  \"updatedAt\": \"2024-01-16T09:00:00.000Z\"\n}"
+            },
+            {
+              "name": "Transaction Not Found",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"description\": \"Lunch at cafe\",\n  \"amount\": 75000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local-link}}/transactions/1",
+                  "host": [
+                    "{{local-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "1"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Transaction not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "DeleteTransaction",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([",
+                  "        200,",
+                  "        204",
+                  "    ]);",
+                  "})",
+                  "",
+                  "pm.test('Response time is less than 3000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{deploy-link}}/transactions/{{baseId}}",
+              "host": [
+                "{{deploy-link}}"
+              ],
+              "path": [
+                "transactions",
+                "{{baseId}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/transactions/2",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "2"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Transaction deleted successfully\"\n}"
+            },
+            {
+              "name": "Transaction Not Found",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/transactions/2",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "2"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"message\": \"Transaction not found\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Scenario Test E2E (Run this for fast testing)",
+      "item": [
+        {
+          "name": "Users",
+          "item": [
+            {
+              "name": "PostUser",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201 or 200', function () {",
+                      "    pm.expect(pm.response.code).to.be.oneOf([",
+                      "        200,",
+                      "        201",
+                      "    ]);",
+                      "})",
+                      "",
+                      "pm.test('Response time is less than 3000ms', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                      "})",
+                      "",
+                      "pm.test('Response body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.be.empty;",
+                      "})",
+                      "",
+                      "pm.test('Content-Type is JSON', function () {",
+                      "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"id\": {{baseId}},\n    \"name\": \"Johny Doe 99\",\n    \"email\": \"john2@example.com\",\n    \"password\": \"password123\",\n    \"role\": \"USER\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/users",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"Johny Doe\",\n  \"email\": \"john2@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"USER\",\n  \"createdAt\": \"2026-05-01T01:30:00.000Z\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/users",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "users"
+                      ]
+                    }
+                  },
+                  "_postman_previewlanguage": null,
+                  "header": null,
+                  "cookie": [],
+                  "body": null
+                }
+              ]
+            },
+            {
+              "name": "AllUsers",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "// 1. Memastikan request berhasil",
+                      "pm.test(\"Status code adalah 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test(\"Data John Doe (ID 99) ditemukan di dalam daftar\", function () {",
+                      "    var jsonData = pm.response.json();",
+                      "    var arrayData = jsonData; // Sesuaikan lagi jika perlu",
+                      "    ",
+                      "    // Cari berdasarkan properti yang ADA di response (misal: name, email, dll)",
+                      "    let isDataExist = arrayData.some(function(item) {",
+                      "        return item.name === \"Johny Doe 99\"; // Ubah 'name' dengan key yang sesuai",
+                      "    });",
+                      "    ",
+                      "    pm.expect(isDataExist, \"Data yang dicari tidak ditemukan\").to.be.true;",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/users",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{deploy-link}}/users",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "users"
+                      ]
+                    }
+                  },
+                  "_postman_previewlanguage": null,
+                  "header": null,
+                  "cookie": [],
+                  "body": null
+                }
+              ]
+            },
+            {
+              "name": "ByIdUser",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "// 1. Memastikan request berhasil",
+                      "pm.test(\"Status code adalah 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/users/{{baseId}}",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "{{baseId}}"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{local-link}}/users/1",
+                      "host": [
+                        "{{local-link}}"
+                      ],
+                      "path": [
+                        "users",
+                        "1"
+                      ]
+                    }
+                  },
+                  "_postman_previewlanguage": null,
+                  "header": null,
+                  "cookie": [],
+                  "body": null
+                }
+              ]
+            },
+            {
+              "name": "PatchUser",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Response time is less than 3000ms', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                      "})",
+                      "",
+                      "pm.test('Response body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.be.empty;",
+                      "})",
+                      "",
+                      "pm.test('Content-Type is JSON', function () {",
+                      "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Updated 99 ID User\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/users/{{baseId}}",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "{{baseId}}"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"John Doe Updated\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/users/1",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "users",
+                        "1"
+                      ]
+                    }
+                  },
+                  "_postman_previewlanguage": null,
+                  "header": null,
+                  "cookie": [],
+                  "body": null
+                },
+                {
+                  "name": "User Not Found",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"John Doe Updated\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/users/99",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "users",
+                        "99"
+                      ]
+                    }
+                  },
+                  "_postman_previewlanguage": null,
+                  "header": null,
+                  "cookie": [],
+                  "body": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Accounts",
+          "item": [
+            {
+              "name": "PostAccount",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201 or 200', function () {",
+                      "    pm.expect(pm.response.code).to.be.oneOf([",
+                      "        200,",
+                      "        201",
+                      "    ]);",
+                      "})",
+                      "",
+                      "pm.test('Response time is less than 3000ms', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                      "})",
+                      "",
+                      "pm.test('Response body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.be.empty;",
+                      "})",
+                      "",
+                      "pm.test('Content-Type is JSON', function () {",
+                      "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"id\": {{baseId}},\r\n  \"userId\": {{baseId}},\r\n  \"name\": \"DANA 99\",\r\n  \"type\": \"E_WALLET\",\r\n  \"balance\": 1000\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/accounts",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"userId\": 1,\n  \"name\": \"Mandiri Savings\",\n  \"type\": \"BANK\",\n  \"balance\": 1000000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/accounts",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "accounts"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "enabled": true
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 3,\n  \"userId\": 1,\n  \"name\": \"Mandiri Savings\",\n  \"type\": \"BANK\",\n  \"balance\": \"1000000.00\",\n  \"createdAt\": \"2024-01-15T10:00:00.000Z\",\n  \"updatedAt\": \"2024-01-15T10:00:00.000Z\"\n}"
+                },
+                {
+                  "name": "Error",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"userId\": 1,\n  \"name\": \"BCA Personal\",\n  \"type\": \"BANK\",\n  \"createdAt\": \"2026-05-01T01:30:00.000Z\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/accounts",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "accounts"
+                      ]
+                    }
+                  },
+                  "_postman_previewlanguage": null,
+                  "header": null,
+                  "cookie": [],
+                  "body": null
+                }
+              ]
+            },
+            {
+              "name": "AllAccounts",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test(\"Data Dana 99 found\", function () {",
+                      "    var jsonData = pm.response.json();",
+                      "    var arrayData = jsonData;",
+                      "    ",
+                      "    // Cari berdasarkan properti yang ADA di response (misal: name, email, dll)",
+                      "    let isDataExist = arrayData.some(function(item) {",
+                      "        return item.name === \"DANA 99\"; // Ubah 'name' dengan key yang sesuai",
+                      "    });",
+                      "    ",
+                      "    pm.expect(isDataExist, \"Data yang dicari tidak ditemukan\").to.be.true;",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/accounts",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts"
+                  ]
+                },
+                "description": "## AllAccounts\n\nRetrieves a list of all accounts associated with the authenticated user.\n\n### Request Details\n\n- **Method:** `GET`\n    \n- **Endpoint:** `{{deploy-link}}/accounts`\n    \n\nThe base URL is dynamically resolved using the `{{deploy-link}}` environment variable, which should be set to the appropriate deployment URL in the active environment.\n\n### Response\n\nReturns a JSON array of account objects. Each object includes the following fields:\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `id` | number | Unique account identifier |\n| `userId` | number | ID of the owning user |\n| `name` | string | Display name of the account (e.g. `\"BCA Personal\"`) |\n| `type` | string | Account type (e.g. `\"BANK\"`) |\n| `balance` | string | Current account balance |\n| `createdAt` | string | ISO 8601 timestamp of account creation |\n| `updatedAt` | string | ISO 8601 timestamp of last update |\n\n### Test Scripts\n\nThe following automated tests are included and run after each response:\n\n- ✅ **Status code is 200** — Asserts the response returns an HTTP `200 OK` status.\n    \n- ⚡ **Response time is less than 3000ms** — Ensures the API responds within 3 seconds.\n    \n- 📦 **Response body is not empty** — Verifies the response body contains data.\n    \n- 🗂️ **Content-Type is JSON** — Confirms the response header includes `application/json`."
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{local-link}}/accounts",
+                      "host": [
+                        "{{local-link}}"
+                      ],
+                      "path": [
+                        "accounts"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "[\n  {\n    \"id\": 1,\n    \"userId\": 1,\n    \"name\": \"BCA Personal\",\n    \"type\": \"BANK\",\n    \"balance\": \"5000000.00\",\n    \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n    \"updatedAt\": \"2024-01-10T08:00:00.000Z\"\n  },\n  {\n    \"id\": 2,\n    \"userId\": 1,\n    \"name\": \"OVO Wallet\",\n    \"type\": \"E_WALLET\",\n    \"balance\": \"250000.00\",\n    \"createdAt\": \"2024-01-11T09:00:00.000Z\",\n    \"updatedAt\": \"2024-01-11T09:00:00.000Z\"\n  }\n]"
+                }
+              ]
+            },
+            {
+              "name": "ByIdAccount",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{local-link}}/accounts/1",
+                  "host": [
+                    "{{local-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "1"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{local-link}}/accounts/1",
+                      "host": [
+                        "{{local-link}}"
+                      ],
+                      "path": [
+                        "accounts",
+                        "1"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 1,\n  \"userId\": 1,\n  \"name\": \"BCA Personal\",\n  \"type\": \"BANK\",\n  \"balance\": \"5000000.00\",\n  \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n  \"updatedAt\": \"2024-01-10T08:00:00.000Z\"\n}"
+                },
+                {
+                  "name": "Account Not Found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{local-link}}/accounts/99",
+                      "host": [
+                        "{{local-link}}"
+                      ],
+                      "path": [
+                        "accounts",
+                        "99"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [
+                    {
+                      "expires": "Invalid Date",
+                      "domain": "",
+                      "path": ""
+                    }
+                  ],
+                  "body": "{\n  \"message\": \"Account not found\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "PatchAccount",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Response time is less than 3000ms', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                      "})",
+                      "",
+                      "pm.test('Response body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.be.empty;",
+                      "})",
+                      "",
+                      "pm.test('Content-Type is JSON', function () {",
+                      "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Edit 99\",\n  \"balance\": 10000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/accounts/{{baseId}}",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "{{baseId}}"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"BCA Main Account\",\n  \"balance\": 7500000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{local-link}}/accounts/1",
+                      "host": [
+                        "{{local-link}}"
+                      ],
+                      "path": [
+                        "accounts",
+                        "1"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "enabled": true
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 1,\n  \"userId\": 1,\n  \"name\": \"BCA Main Account\",\n  \"type\": \"BANK\",\n  \"balance\": \"7500000.00\",\n  \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n  \"updatedAt\": \"2024-01-16T11:00:00.000Z\"\n}"
+                },
+                {
+                  "name": "Account Not Found",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"BCA Main Account\",\n  \"balance\": 7500000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{local-link}}/accounts/1",
+                      "host": [
+                        "{{local-link}}"
+                      ],
+                      "path": [
+                        "accounts",
+                        "1"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "enabled": true
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"message\": \"Account not found\"\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Categories",
+          "item": [
+            {
+              "name": "PostCategory",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201 or 200', function () {",
+                      "    pm.expect(pm.response.code).to.be.oneOf([",
+                      "        200,",
+                      "        201",
+                      "    ]);",
+                      "})",
+                      "",
+                      "pm.test('Response time is less than 3000ms', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                      "})",
+                      "",
+                      "pm.test('Response body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.be.empty;",
+                      "})",
+                      "",
+                      "pm.test('Content-Type is JSON', function () {",
+                      "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": {{baseId}},\n  \"name\": \"Bonus 99\",\n  \"type\": \"INCOME\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/categories",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"userId\": 1,\n  \"name\": \"Entertainment\",\n  \"type\": \"EXPENSE\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/categories",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "categories"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "enabled": true
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 4,\n  \"userId\": 1,\n  \"name\": \"Entertainment\",\n  \"type\": \"EXPENSE\",\n  \"createdAt\": \"2024-01-15T10:00:00.000Z\",\n  \"updatedAt\": \"2024-01-15T10:00:00.000Z\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "AllCategories",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test(\"category found\", function () {",
+                      "    var jsonData = pm.response.json();",
+                      "    var arrayData = jsonData; // Sesuaikan lagi jika perlu",
+                      "    ",
+                      "    // Cari berdasarkan properti yang ADA di response (misal: name, email, dll)",
+                      "    let isDataExist = arrayData.some(function(item) {",
+                      "        return item.name === \"Bonus 99\"; // Ubah 'name' dengan key yang sesuai",
+                      "    });",
+                      "    ",
+                      "    pm.expect(isDataExist, \"Data yang dicari tidak ditemukan\").to.be.true;",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/categories",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/categories",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "categories"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "[\n  {\n    \"id\": 1,\n    \"userId\": 1,\n    \"name\": \"Food & Beverage\",\n    \"type\": \"EXPENSE\",\n    \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n    \"updatedAt\": \"2024-01-10T08:00:00.000Z\"\n  },\n  {\n    \"id\": 2,\n    \"userId\": 1,\n    \"name\": \"Salary\",\n    \"type\": \"INCOME\",\n    \"createdAt\": \"2024-01-10T08:30:00.000Z\",\n    \"updatedAt\": \"2024-01-10T08:30:00.000Z\"\n  },\n  {\n    \"id\": 3,\n    \"userId\": 1,\n    \"name\": \"Transportation\",\n    \"type\": \"EXPENSE\",\n    \"createdAt\": \"2024-01-10T09:00:00.000Z\",\n    \"updatedAt\": \"2024-01-10T09:00:00.000Z\"\n  }\n]"
+                }
+              ]
+            },
+            {
+              "name": "ByIdCategory",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/categories/1",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "1"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/categories/1",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "categories",
+                        "1"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 1,\n  \"userId\": 1,\n  \"name\": \"Food & Beverage\",\n  \"type\": \"EXPENSE\",\n  \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n  \"updatedAt\": \"2024-01-10T08:00:00.000Z\"\n}"
+                },
+                {
+                  "name": "Category Not Found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/categories/1",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "categories",
+                        "1"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"message\": \"Category not found\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "PatchCategory",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Response time is less than 3000ms', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                      "})",
+                      "",
+                      "pm.test('Response body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.be.empty;",
+                      "})",
+                      "",
+                      "pm.test('Content-Type is JSON', function () {",
+                      "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Edit 99\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/categories/{{baseId}}",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "{{baseId}}"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"Food & Drinks\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/categories/1",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "categories",
+                        "1"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "enabled": true
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 1,\n  \"userId\": 1,\n  \"name\": \"Food & Drinks\",\n  \"type\": \"EXPENSE\",\n  \"createdAt\": \"2024-01-10T08:00:00.000Z\",\n  \"updatedAt\": \"2024-01-16T11:00:00.000Z\"\n}"
+                },
+                {
+                  "name": "Category Not Found",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"Food & Drinks\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/categories/1",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "categories",
+                        "1"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "enabled": true
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"message\": \"Category not found\"\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Transactions",
+          "item": [
+            {
+              "name": "PostTransaction",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201 or 200', function () {",
+                      "    pm.expect(pm.response.code).to.be.oneOf([",
+                      "        200,",
+                      "        201",
+                      "    ]);",
+                      "})",
+                      "",
+                      "pm.test('Response time is less than 3000ms', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                      "})",
+                      "",
+                      "pm.test('Response body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.be.empty;",
+                      "})",
+                      "",
+                      "pm.test('Content-Type is JSON', function () {",
+                      "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": {{baseId}},\n  \"accountId\": {{baseId}},\n  \"categoryId\": {{baseId}},\n  \"type\": \"EXPENSE\",\n  \"amount\": 50,\n  \"description\": \"Setoran awal 99\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/transactions",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"accountId\": 1,\n  \"categoryId\": 1,\n  \"type\": \"EXPENSE\",\n  \"amount\": 1,\n  \"description\": \"Setoran awal\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{local-link}}/transactions",
+                      "host": [
+                        "{{local-link}}"
+                      ],
+                      "path": [
+                        "transactions"
+                      ]
+                    }
+                  },
+                  "_postman_previewlanguage": null,
+                  "header": null,
+                  "cookie": [],
+                  "body": null
+                },
+                {
+                  "name": "Account Not Found",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"accountId\": 1,\n  \"categoryId\": 1,\n  \"type\": \"EXPENSE\",\n  \"amount\": 500000,\n  \"description\": \"Setoran awal\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{local-link}}/transactions",
+                      "host": [
+                        "{{local-link}}"
+                      ],
+                      "path": [
+                        "transactions"
+                      ]
+                    }
+                  },
+                  "_postman_previewlanguage": null,
+                  "header": null,
+                  "cookie": [],
+                  "body": null
+                }
+              ]
+            },
+            {
+              "name": "AllTransactions",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test(\"Transaction found\", function () {",
+                      "    var jsonData = pm.response.json();",
+                      "    var arrayData = jsonData; // Sesuaikan lagi jika perlu",
+                      "    ",
+                      "    // Cari berdasarkan properti yang ADA di response (misal: name, email, dll)",
+                      "    let isDataExist = arrayData.some(function(item) {",
+                      "        return item.description === \"Setoran awal 99\";",
+                      "    });",
+                      "    ",
+                      "    pm.expect(isDataExist, \"Data yang dicari tidak ditemukan\").to.be.true;",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/transactions",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/transactions",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "transactions"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "[\n  {\n    \"id\": 1,\n    \"accountId\": 1,\n    \"categoryId\": 1,\n    \"amount\": \"50000.00\",\n    \"type\": \"EXPENSE\",\n    \"description\": \"Lunch at restaurant\",\n    \"date\": \"2024-01-15T12:00:00.000Z\",\n    \"createdAt\": \"2024-01-15T12:05:00.000Z\",\n    \"updatedAt\": \"2024-01-15T12:05:00.000Z\"\n  },\n  {\n    \"id\": 2,\n    \"accountId\": 1,\n    \"categoryId\": 2,\n    \"amount\": \"5000000.00\",\n    \"type\": \"INCOME\",\n    \"description\": \"Monthly salary\",\n    \"date\": \"2024-01-01T08:00:00.000Z\",\n    \"createdAt\": \"2024-01-01T08:05:00.000Z\",\n    \"updatedAt\": \"2024-01-01T08:05:00.000Z\"\n  }\n]"
+                }
+              ]
+            },
+            {
+              "name": "ByIdTransaction",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/transactions/{{baseId}}",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "{{baseId}}"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/transactions/1",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "transactions",
+                        "1"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 1,\n  \"accountId\": 1,\n  \"categoryId\": 1,\n  \"amount\": \"50000.00\",\n  \"type\": \"EXPENSE\",\n  \"description\": \"Lunch at restaurant\",\n  \"date\": \"2024-01-15T12:00:00.000Z\",\n  \"createdAt\": \"2024-01-15T12:05:00.000Z\",\n  \"updatedAt\": \"2024-01-15T12:05:00.000Z\"\n}"
+                },
+                {
+                  "name": "Transaction Not Found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/transactions/1",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "transactions",
+                        "1"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"message\": \"Transaction not found\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "PatchTransaction",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Response time is less than 3000ms', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                      "})",
+                      "",
+                      "pm.test('Response body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.be.empty;",
+                      "})",
+                      "",
+                      "pm.test('Content-Type is JSON', function () {",
+                      "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 2000,\n  \"description\": \"Revisi setoran awal\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{deploy-link}}/transactions/{{baseId}}",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "{{baseId}}"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"description\": \"Lunch at cafe\",\n  \"amount\": 75000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{local-link}}/transactions/1",
+                      "host": [
+                        "{{local-link}}"
+                      ],
+                      "path": [
+                        "transactions",
+                        "1"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "enabled": true
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 1,\n  \"accountId\": 1,\n  \"categoryId\": 1,\n  \"amount\": \"75000.00\",\n  \"type\": \"EXPENSE\",\n  \"description\": \"Lunch at cafe\",\n  \"date\": \"2024-01-15T12:00:00.000Z\",\n  \"createdAt\": \"2024-01-15T12:05:00.000Z\",\n  \"updatedAt\": \"2024-01-16T09:00:00.000Z\"\n}"
+                },
+                {
+                  "name": "Transaction Not Found",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"description\": \"Lunch at cafe\",\n  \"amount\": 75000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{local-link}}/transactions/1",
+                      "host": [
+                        "{{local-link}}"
+                      ],
+                      "path": [
+                        "transactions",
+                        "1"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "enabled": true
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"message\": \"Transaction not found\"\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Cleaning",
+          "item": [
+            {
+              "name": "DeleteTransaction",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200 or 204', function () {",
+                      "    pm.expect(pm.response.code).to.be.oneOf([",
+                      "        200,",
+                      "        204",
+                      "    ]);",
+                      "})",
+                      "",
+                      "pm.test('Response time is less than 3000ms', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/transactions/{{baseId}}",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "{{baseId}}"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/transactions/2",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "transactions",
+                        "2"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"message\": \"Transaction deleted successfully\"\n}"
+                },
+                {
+                  "name": "Transaction Not Found",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/transactions/2",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "transactions",
+                        "2"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"message\": \"Transaction not found\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "DeleteAccount",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200 or 204', function () {",
+                      "    pm.expect(pm.response.code).to.be.oneOf([",
+                      "        200,",
+                      "        204",
+                      "    ]);",
+                      "})",
+                      "",
+                      "pm.test('Response time is less than 3000ms', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/accounts/{{baseId}}",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "{{baseId}}"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/accounts/2",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "accounts",
+                        "2"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"message\": \"Account deleted successfully\"\n}"
+                },
+                {
+                  "name": "Account Not Found",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/accounts/2",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "accounts",
+                        "2"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"message\": \"Account not found\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "DeleteUser",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200 or 204', function () {",
+                      "    pm.expect(pm.response.code).to.be.oneOf([",
+                      "        200,",
+                      "        204",
+                      "    ]);",
+                      "})",
+                      "",
+                      "pm.test('Response time is less than 3000ms', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/users/{{baseId}}",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "{{baseId}}"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [],
+                    "url": {
+                      "raw": "{{deploy-link}}/users/2",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "users",
+                        "2"
+                      ]
+                    }
+                  },
+                  "_postman_previewlanguage": null,
+                  "header": null,
+                  "cookie": [],
+                  "body": null
+                },
+                {
+                  "name": "User Not Found",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [],
+                    "url": {
+                      "raw": "{{local-link}}/users/99",
+                      "host": [
+                        "{{local-link}}"
+                      ],
+                      "path": [
+                        "users",
+                        "99"
+                      ]
+                    }
+                  },
+                  "_postman_previewlanguage": null,
+                  "header": null,
+                  "cookie": [],
+                  "body": null
+                }
+              ]
+            },
+            {
+              "name": "DeleteCategory",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200 or 204', function () {",
+                      "    pm.expect(pm.response.code).to.be.oneOf([",
+                      "        200,",
+                      "        204",
+                      "    ]);",
+                      "})",
+                      "",
+                      "pm.test('Response time is less than 3000ms', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/categories/{{baseId}}",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "{{baseId}}"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "success",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/categories/2",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "categories",
+                        "2"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"message\": \"Category deleted successfully\"\n}"
+                },
+                {
+                  "name": "Category Not Found",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{deploy-link}}/categories/2",
+                      "host": [
+                        "{{deploy-link}}"
+                      ],
+                      "path": [
+                        "categories",
+                        "2"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"message\": \"Category not found\"\n}"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "description": "Skenario test yang sudah di settings menggunakan ID 99 untuk semua data yang di post di masing-masing module.\n\nMenggunakan baseUrl dan baseId yang sudah di set di variable collections Fintrack.\n\n| **#** | **METHOD** | **DESCRIPTION** | **EXPECTATION** | **RESULT** |\n| --- | --- | --- | --- | --- |\n| 1 | GET / | For all endpoint in getAll method.  <br>Use iteration some for found item with ID 99, and use name or description because return data not include ID. | Status 200 and  <br>Item with ID 99 Found | ✅ |\n| 2 | GET /:id | For all endpoint in getWithId method. | Status 200 | ✅ |\n| 3 | POST / | For all endpoint in postItem method. | Status code is 201 or 200  <br>Response time is less than 3000ms  <br>Response body is not empty  <br>Content-Type is JSON | ✅ |\n| 4 | PATCH /:id | For all endpoint in patchItem / editItem method. | Status code is 200  <br>Response time is less than 3000ms  <br>Response body is not empty  <br>Content-Type is JSON | ✅ |\n| 5 | DELETE /:id | For all endpoint in deleteItem method. | Status code is 200 or 204  <br>Response time is less than 3000ms | ✅ |"
     }
   ],
   "event": [
@@ -498,8 +4122,16 @@
   ],
   "variable": [
     {
-      "key": "deploy-link",
+      "key": "local-link",
+      "value": "localhost:3000/api"
+    },
+    {
+      "key": "baseUrl",
       "value": "https://milestone-4-diba15-production.up.railway.app/api"
+    },
+    {
+      "key": "baseId",
+      "value": "99"
     }
   ]
 }
