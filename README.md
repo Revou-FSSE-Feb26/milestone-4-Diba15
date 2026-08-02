@@ -73,6 +73,8 @@ pnpm run start:dev
 
 ![Endpoints](img_1.png)
 
+- Global Prefix (`/api`)
+
 - Categories (prefix /categories)
     - POST /categories — body: CreateCategoryDto
     - GET /categories
