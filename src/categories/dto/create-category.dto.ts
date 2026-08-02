@@ -1,8 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsString, IsNotEmpty, IsOptional } from 'class-validator';
 import { CategoryType } from '../../generated/prisma/enums';
 
 export class CreateCategoryDto {
+  @IsOptional()
+  @ApiProperty({
+    example: 1,
+    description: 'ID of category',
+    required: false,
+  })
+  id: number;
+
   @IsString()
   @IsNotEmpty()
   @ApiProperty({

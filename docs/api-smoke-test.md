@@ -1,1 +1,0 @@
-Apa sih ini

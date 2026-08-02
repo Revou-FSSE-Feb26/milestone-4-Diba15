@@ -10,6 +10,14 @@ import {
 import { TransactionType } from '../../generated/prisma/enums';
 
 export class CreateTransactionDto {
+  @IsOptional()
+  @ApiProperty({
+    example: 1,
+    description: 'ID of transaction',
+    required: false,
+  })
+  id: number;
+
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty()

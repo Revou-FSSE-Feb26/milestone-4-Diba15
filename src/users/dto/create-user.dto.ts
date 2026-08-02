@@ -3,6 +3,14 @@ import { IsNotEmpty, IsOptional, IsString, IsEnum } from 'class-validator';
 import { Role } from '../../generated/prisma/enums';
 
 export class CreateUserDto {
+  @IsOptional()
+  @ApiProperty({
+    example: 1,
+    description: 'ID of user',
+    required: false,
+  })
+  id: number;
+
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ example: 'mas arif', description: 'Name of user' })

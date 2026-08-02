@@ -70,6 +70,7 @@ export class TransactionsService {
 
     return this.transactionsRepository.update(
       id,
+      transaction.accountId,
       updateTransactionDto,
       balanceChange,
     );

@@ -1,8 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString, IsEnum, Min } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsEnum,
+  Min,
+  IsOptional,
+} from 'class-validator';
 import { AccountType } from '../../generated/prisma/enums';
 
 export class CreateAccountDto {
+  @IsOptional()
+  @ApiProperty({
+    example: 1,
+    description: 'ID of account',
+    required: false,
+  })
+  id: number;
+
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({

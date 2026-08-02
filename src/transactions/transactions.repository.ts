@@ -46,16 +46,17 @@ export class TransactionsRepository {
 
   async update(
     id: number,
+    accountId: number,
     updateTransactionDto: UpdateTransactionDto,
     balanceChange: number,
   ) {
     return this.prisma.$transaction([
       this.prisma.transaction.update({
-        where: { id },
+        where: { id: id },
         data: updateTransactionDto,
       }),
       this.prisma.account.update({
-        where: { id: updateTransactionDto.accountId },
+        where: { id: accountId },
         data: {
           balance:
             balanceChange > 0
