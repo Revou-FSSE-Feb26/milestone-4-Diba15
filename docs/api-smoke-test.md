@@ -1,51 +1,131 @@
-# API SMOKE TEST DOCUMENTATION
+# API SMOKE TEST & ERROR HANDLING DOCUMENTATION
 
 ### INTRODUCTION
 
-This documentation is for smoke testing the API endpoints of the Fintrack application. The smoke test is a basic test to
-ensure that the API is working correctly and that all endpoints are accessible.
+Dokumentasi ini berisi panduan **Smoke Testing** dan referensi **Error Handling** untuk seluruh endpoint REST API pada aplikasi **Fintrack**. Pengujian smoke test bertujuan memastikan seluruh endpoint utama dapat diakses, merespon dalam batas waktu yang ditentukan, dan mengembalikan struktur data yang sesuai.
 
-### LIMITATIONS
+Setiap endpoint pada koleksi Postman ([fintrack.postman_collection.json](file:///d:/Revou/Assignment/milestone-4-Diba15/docs/fintrack.postman_collection.json)) telah dilengkapi dengan contoh *Saved Response* untuk skenario **Sukses (200/201)** maupun skenario **Error (400, 401, 403, 404, 409, 429)** sesuai dengan exception handling bawaan backend NestJS.
 
-Current smoke tests do not cover all edge cases, such as **missing JSON data** or **insufficient balance** during
-account creation.
+---
 
 ### COLLECTION VARIABLES
 
-Don't change this after you import the collection in postman.
+| **Variable Name**   | **Description / Default Value**                           |
+|---------------------|----------------------------------------------------------|
+| `deploy-link`       | `http://localhost:3000/api`                              |
+| `baseUrl`           | `https://milestone-4-diba15-production.up.railway.app/api` |
+| `baseId`            | `99` (ID acuan untuk pengujian smoke test)               |
+| `access_token`      | Auto-saved pada saat Login                               |
+| `refresh_token`     | Auto-saved pada saat Login                               |
 
-| **Name**   | **Value**                                                |
-|------------|----------------------------------------------------------|
-| local-link | http://localhost:3000/api                                |
-| baseUrl    | https://milestone-4-diba15-production.up.railway.app/api |
-| baseId     | 99                                                       |
+---
 
-### TEST RUN
+### DAFTAR ENDPOINT & EXAMPLE ERROR RESPONSES PER MODUL
 
-|             |                                                          |
-|-------------|----------------------------------------------------------|
-| Date        | 2026-08-02 12:41 WIB                                     |
-| Environment | Collection Variable / none                               |
-| baseUrl     | https://milestone-4-diba15-production.up.railway.app/api |
+#### 1. Auths (`/auth`)
+* **`POST /auth/login`**
+  * `200 OK`: Login sukses mengembalikan `access_token` & `user`.
+  * `400 Bad Request`: Validasi payload gagal (format email salah atau password kosong).
+  * `401 Unauthorized`: Kredensial tidak valid (`"Invalid credentials"`).
+  * `429 Too Many Requests`: Batas percobaan login terlampaui (`"ThrottlerException: Too Many Requests"`).
+* **`POST /auth/register`**
+  * `201 Created`: Registrasi pengguna baru berhasil.
+  * `400 Bad Request`: Format email/password tidak memenuhi kriteria DTO.
+  * `409 Conflict`: Email sudah terdaftar (`"User already exists"`).
+* **`GET /users/me`**
+  * `200 OK`: Profile user login berhasil diambil.
+  * `401 Unauthorized`: Token JWT tidak disertakan atau kedaluwarsa.
+* **`POST /auth/refresh-token`**
+  * `200 OK`: Memperbarui token akses.
+  * `403 Forbidden`: Refresh token tidak valid atau tidak cocok (`"Akses ditolak"`).
+* **`POST /auth/logout`**
+  * `200 OK`: Logout berhasil (`{"message": "Berhasil logout"}`).
+  * `401 Unauthorized`: Token tidak ada.
 
-### ENDPOINT SMOKE TEST IN POSTMAN
+---
 
-| **#** | **METHOD**  | **DESCRIPTION**                                                                                                                                       | **EXPECTATION**                                                                                                            | **RESULT** |
-|-------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|------------|
-| 1     | GET /       | For all endpoint in getAll method.  <br>Use iteration some for found item with ID 99, and use name or description because return data not include ID. | Status 200 and  <br>Item with ID 99 Found                                                                                  | ✅         |
-| 2     | GET /:id    | For all endpoint in getWithId method.                                                                                                                 | Status 200                                                                                                                 | ✅         |
-| 3     | POST /      | For all endpoint in postItem method.                                                                                                                  | Status code is 201 or 200  <br>Response time is less than 3000ms  <br>Response body is not empty  <br>Content-Type is JSON | ✅         |
-| 4     | PATCH /:id  | For all endpoint in patchItem / editItem method.                                                                                                      | Status code is 200  <br>Response time is less than 3000ms  <br>Response body is not empty  <br>Content-Type is JSON        | ✅         |
-| 5     | DELETE /:id | For all endpoint in deleteItem method.                                                                                                                | Status code is 200 or 204  <br>Response time is less than 3000ms                                                           | ✅         |
+#### 2. Users (`/users`)
+* **`GET /users` (Admin Only)**
+  * `200 OK`: Daftar seluruh pengguna.
+  * `401 Unauthorized`: Belum login.
+  * `403 Forbidden`: Akses ditolak jika peran bukan ADMIN (`"Akses ditolak: Anda tidak memiliki izin admin"`).
+* **`GET /users/:id`**
+  * `200 OK`: Detail pengguna berdasarkan ID.
+  * `403 Forbidden`: Mengakses data milik user lain (`"Akses ditolak: Anda hanya dapat mengakses data Anda sendiri"`).
+  * `404 Not Found`: User tidak ditemukan (`"User #99 not found"`).
+* **`PATCH /users/:id`**
+  * `200 OK`: Update nama/data user berhasil.
+  * `400 Bad Request`: Format DTO salah.
+  * `403 Forbidden`: Tidak memiliki hak edit user lain.
+  * `404 Not Found`: User tidak ditemukan.
+* **`DELETE /users/:id`**
+  * `200 OK`: User berhasil dihapus.
+  * `403 Forbidden`: Tidak memiliki hak hapus user lain.
+  * `404 Not Found`: User tidak ditemukan.
 
-### HOW TO RUN THE TEST IN POSTMAN JSON COLLECTION
+---
 
-1. Open Postman
-2. Import the collection from the file `fintrack.postman_collection.json`
-3. Don't change the variable in collections
-4. Right click and Run the collection with name Scenario Test E2E
-5. Click start run and wait until finish
+#### 3. Accounts (`/accounts`)
+* **`POST /accounts`**
+  * `201 Created`: Akun berhasil dibuat (`BANK`, `E_WALLET`, `CASH`).
+  * `400 Bad Request`: Field nama/tipe tidak valid.
+  * `401 Unauthorized`: Belum login.
+* **`GET /accounts`**
+  * `200 OK`: Memuat daftar akun milik pengguna.
+  * `401 Unauthorized`: Belum login.
+* **`GET /accounts/:id`**
+  * `200 OK`: Detail akun.
+  * `404 Not Found`: Akun tidak ditemukan (`"Account #99 not found"`).
+* **`PATCH /accounts/:id`**
+  * `200 OK`: Update nama atau saldo akun.
+  * `400 Bad Request`: Saldo tidak valid.
+  * `404 Not Found`: Akun tidak ditemukan.
+* **`DELETE /accounts/:id`**
+  * `200 OK`: Akun berhasil dihapus.
+  * `404 Not Found`: Akun tidak ditemukan.
 
-### CONCLUSION
+---
 
-All 51/51 test pass. Deployed backend don't have a problem with all endpoint and transaction scenarios. 
+#### 4. Categories (`/categories`)
+* **`POST /categories`**
+  * `201 Created`: Kategori berhasil dibuat (`INCOME`, `EXPENSE`).
+  * `400 Bad Request`: Nama kategori kosong.
+* **`GET /categories`**
+  * `200 OK`: Daftar seluruh kategori.
+* **`GET /categories/:id`**
+  * `200 OK`: Detail kategori.
+  * `404 Not Found`: Kategori tidak ditemukan (`"Category #99 not found"`).
+* **`PATCH /categories/:id`**
+  * `200 OK`: Update nama kategori.
+  * `404 Not Found`: Kategori tidak ditemukan.
+* **`DELETE /categories/:id`**
+  * `200 OK`: Kategori berhasil dihapus.
+  * `404 Not Found`: Kategori tidak ditemukan.
+
+---
+
+#### 5. Transactions (`/transactions`)
+* **`POST /transactions`**
+  * `201 Created`: Transaksi berhasil dicatat.
+  * `400 Bad Request (Saldo)`: Saldo akun tidak mencukupi (`"Insufficient funds"`).
+  * `400 Bad Request (DTO)`: Amount negatif atau tipe transaksi salah.
+  * `404 Not Found`: Akun tujuan tidak ditemukan / bukan milik user (`"Account not found or invalid permission"`).
+* **`GET /transactions`**
+  * `200 OK`: Memuat daftar transaksi milik pengguna.
+* **`GET /transactions/:id`**
+  * `200 OK`: Detail transaksi.
+  * `404 Not Found`: Transaksi tidak ditemukan (`"Transaction #99 not found"`).
+* **`PATCH /transactions/:id`**
+  * `200 OK`: Perubahan jumlah/deskripsi transaksi.
+  * `404 Not Found`: Transaksi tidak ditemukan.
+* **`DELETE /transactions/:id`**
+  * `200 OK`: Transaksi dihapus dan saldo akun disesuaikan kembali (reverse balance).
+  * `404 Not Found`: Transaksi tidak ditemukan.
+
+---
+
+### CARA MENJALANKAN SMOKE TEST DI POSTMAN
+
+1. Import file [fintrack.postman_collection.json](file:///d:/Revou/Assignment/milestone-4-Diba15/docs/fintrack.postman_collection.json) di Postman.
+2. Atur variabel `deploy-link` ke URL API Anda (misal: `http://localhost:3000/api`).
+3. Anda dapat menjalankan setiap request secara mandiri atau menjalankan seluruh folder modul (misal folder `Accounts` atau `Transactions`) menggunakan Postman Collection Runner.
