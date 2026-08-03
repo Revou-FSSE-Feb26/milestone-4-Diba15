@@ -10,7 +10,7 @@ import { BalanceCalculatorService } from './balance-calculator.service';
     TransactionsService,
     TransactionsRepository,
     {
-      provide: BalanceCalculatorService,
+      provide: 'BALANCE_CALCULATOR',
       useClass: BalanceCalculatorService,
     },
   ],
