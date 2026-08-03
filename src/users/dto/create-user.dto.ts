@@ -34,11 +34,11 @@ export class CreateUserDto {
   password: string;
 
   @IsEnum(Role)
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
     enum: Role,
     example: Role.USER,
     description: 'Role of user',
   })
-  role: Role;
+  role?: Role;
 }

@@ -16,15 +16,20 @@ export class TransactionsService {
     @Inject('BALANCE_CALCULATOR')
     private readonly balanceCalc: BalanceCalculatorService,
   ) {}
-  async create(createTransactionDto: CreateTransactionDto) {
-    const accountBalance = await this.transactionsRepository.getAccountBalance(
+  async create(userId: number, createTransactionDto: CreateTransactionDto) {
+    const account = await this.transactionsRepository.verifyAccountOwnership(
       createTransactionDto.accountId,
+      userId,
     );
-    if (!accountBalance) throw new NotFoundException('Account not found');
 
-    const balance = Number(accountBalance.balance ?? 0);
+    if (!account) {
+      throw new NotFoundException('Account not found or invalid permission');
+    }
 
-    // Menggunakan provider custom untuk pengecekan
+    // Ubah saldo menjadi number
+    const balance = Number(account.balance ?? 0);
+
+    // Cek saldo
     if (
       this.balanceCalc.isInsufficient(
         balance,
@@ -38,12 +43,15 @@ export class TransactionsService {
     return this.transactionsRepository.create(createTransactionDto);
   }
 
-  findAll() {
-    return this.transactionsRepository.findAll();
+  findAll(userId: number) {
+    return this.transactionsRepository.findAll(userId);
   }
 
-  async findOne(id: number) {
-    const findTransaction = await this.transactionsRepository.findOne(id);
+  async findOne(id: number, userId: number) {
+    const findTransaction = await this.transactionsRepository.findOne(
+      id,
+      userId,
+    );
 
     if (!findTransaction)
       throw new NotFoundException(`Transaction #${id} not found`);
@@ -51,8 +59,12 @@ export class TransactionsService {
     return findTransaction;
   }
 
-  async update(id: number, updateTransactionDto: UpdateTransactionDto) {
-    const transaction = await this.findOne(id);
+  async update(
+    id: number,
+    userId: number,
+    updateTransactionDto: UpdateTransactionDto,
+  ) {
+    const transaction = await this.findOne(id, userId);
     const oldAmount = Number(transaction.amount ?? 0);
     const newAmount = Number(updateTransactionDto.amount ?? 0);
 
@@ -71,8 +83,8 @@ export class TransactionsService {
     );
   }
 
-  async remove(id: number) {
-    const transaction = await this.findOne(id);
+  async remove(id: number, userId: number) {
+    const transaction = await this.findOne(id, userId);
 
     if (!transaction)
       throw new NotFoundException(`Transaction #${id} not found`);

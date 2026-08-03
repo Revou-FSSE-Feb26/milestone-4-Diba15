@@ -7,12 +7,16 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
@@ -23,8 +27,12 @@ export class TransactionsController {
     status: 201,
     description: 'Transaction created',
   })
-  create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionsService.create(createTransactionDto);
+  create(
+    @Req() req: { user: { id: number } },
+    @Body() createTransactionDto: CreateTransactionDto,
+  ) {
+    const userId = req.user.id;
+    return this.transactionsService.create(userId, createTransactionDto);
   }
 
   @Get()
@@ -33,8 +41,8 @@ export class TransactionsController {
     status: 200,
     description: 'List of transactions',
   })
-  findAll() {
-    return this.transactionsService.findAll();
+  findAll(@Req() req: { user: { id: number } }) {
+    return this.transactionsService.findAll(req.user.id);
   }
 
   @Get(':id')
@@ -51,8 +59,11 @@ export class TransactionsController {
     status: 500,
     description: 'Internal server error',
   })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.transactionsService.findOne(id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: { user: { id: number } },
+  ) {
+    return this.transactionsService.findOne(id, req.user.id);
   }
 
   @Patch(':id')
@@ -72,8 +83,13 @@ export class TransactionsController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTransactionDto: UpdateTransactionDto,
+    @Req() req: { user: { id: number } },
   ) {
-    return this.transactionsService.update(id, updateTransactionDto);
+    return this.transactionsService.update(
+      id,
+      req.user.id,
+      updateTransactionDto,
+    );
   }
 
   @Delete(':id')
@@ -90,7 +106,10 @@ export class TransactionsController {
     status: 500,
     description: 'Internal server error',
   })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.transactionsService.remove(id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: { user: { id: number } },
+  ) {
+    return this.transactionsService.remove(id, req.user.id);
   }
 }

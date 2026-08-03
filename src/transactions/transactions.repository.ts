@@ -7,20 +7,37 @@ import { PrismaService } from '../prisma/prisma.service';
 export class TransactionsRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findAll() {
-    return this.prisma.transaction.findMany();
-  }
-
-  async findOne(id: number) {
-    return this.prisma.transaction.findUnique({
-      where: { id },
+  async findAll(userId: number) {
+    return this.prisma.transaction.findMany({
+      where: {
+        account: {
+          userId: userId,
+        },
+      },
     });
   }
 
-  getAccountBalance(id: number) {
-    return this.prisma.account.findUnique({
-      where: { id },
-      select: { balance: true },
+  async findOne(id: number, userId: number) {
+    return this.prisma.transaction.findFirst({
+      where: {
+        id,
+        account: {
+          userId: userId,
+        },
+      },
+      include: {
+        account: true,
+      },
+    });
+  }
+
+  async verifyAccountOwnership(accountId: number, userId: number) {
+    return this.prisma.account.findFirst({
+      where: {
+        id: accountId,
+        userId: userId,
+      },
+      select: { id: true, balance: true },
     });
   }
 
