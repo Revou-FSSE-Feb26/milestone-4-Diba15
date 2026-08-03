@@ -75,7 +75,11 @@ export class AuthController {
   ) {
     return {
       message: 'Get Profile Success',
-      user: req.user,
+      user: {
+        id: req.user.sub,
+        email: req.user.email,
+        role: req.user.role,
+      },
     };
   }
 
