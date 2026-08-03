@@ -28,9 +28,11 @@ export class UsersRepository {
     return this.prisma.user.findUnique({
       where: { id },
       select: {
+        id: true,
         name: true,
         email: true,
         role: true,
+        refreshToken: true,
         createdAt: true,
         accounts: true,
       },

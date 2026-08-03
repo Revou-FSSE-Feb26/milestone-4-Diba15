@@ -9,7 +9,7 @@ export class CreateUserDto {
     description: 'ID of user',
     required: false,
   })
-  id: number;
+  id?: number;
 
   @IsString()
   @IsNotEmpty()

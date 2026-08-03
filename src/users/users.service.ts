@@ -13,9 +13,7 @@ export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
   async create(createUserDto: CreateUserDto) {
-    const existUser = await this.usersRepository.findByEmail(
-      createUserDto.email,
-    );
+    const existUser = await this.findByEmail(createUserDto.email);
 
     if (existUser) throw new ConflictException('User already exists');
 
@@ -28,6 +26,10 @@ export class UsersService {
       ...createUserDto,
       password: hashedPassword,
     });
+  }
+
+  findByEmail(email: string) {
+    return this.usersRepository.findByEmail(email);
   }
 
   findAll() {
@@ -56,5 +58,15 @@ export class UsersService {
     if (!user) throw new NotFoundException('User not found');
 
     return this.usersRepository.remove(id);
+  }
+
+  async updateRefreshToken(userId: number, refreshToken: string | null) {
+    if (refreshToken) {
+      const hash = await bcrypt.hash(refreshToken, 10);
+      await this.usersRepository.update(userId, { refreshToken: hash });
+    } else {
+      // Jika null (Logout), hapus dari database
+      await this.usersRepository.update(userId, { refreshToken: null });
+    }
   }
 }
