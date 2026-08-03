@@ -16,11 +16,6 @@ export class TransactionsService {
     @Inject('BALANCE_CALCULATOR')
     private readonly balanceCalc: BalanceCalculatorService,
   ) {}
-
-  getAccountBalance(id: number) {
-    return this.transactionsRepository.getAccountBalance(id);
-  }
-
   async create(createTransactionDto: CreateTransactionDto) {
     const accountBalance = await this.transactionsRepository.getAccountBalance(
       createTransactionDto.accountId,
