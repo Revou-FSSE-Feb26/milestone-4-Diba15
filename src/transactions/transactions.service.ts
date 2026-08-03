@@ -1,16 +1,20 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { TransactionsRepository } from './transactions.repository';
+import { BalanceCalculatorService } from './balance-calculator.service';
 
 @Injectable()
 export class TransactionsService {
   constructor(
     private readonly transactionsRepository: TransactionsRepository,
+    @Inject('BALANCE_CALCULATOR')
+    private readonly balanceCalc: BalanceCalculatorService,
   ) {}
 
   getAccountBalance(id: number) {
@@ -18,18 +22,20 @@ export class TransactionsService {
   }
 
   async create(createTransactionDto: CreateTransactionDto) {
-    const accountBalance = await this.getAccountBalance(
+    const accountBalance = await this.transactionsRepository.getAccountBalance(
       createTransactionDto.accountId,
     );
-
     if (!accountBalance) throw new NotFoundException('Account not found');
 
-    const balance: number = Number(accountBalance.balance ?? 0);
+    const balance = Number(accountBalance.balance ?? 0);
 
+    // Menggunakan provider custom untuk pengecekan
     if (
-      (createTransactionDto.type === 'EXPENSE' ||
-        createTransactionDto.type === 'TRANSFER') &&
-      balance < createTransactionDto.amount
+      this.balanceCalc.isInsufficient(
+        balance,
+        createTransactionDto.amount,
+        createTransactionDto.type,
+      )
     ) {
       throw new BadRequestException('Insufficient funds');
     }
@@ -52,21 +58,15 @@ export class TransactionsService {
 
   async update(id: number, updateTransactionDto: UpdateTransactionDto) {
     const transaction = await this.findOne(id);
-
-    if (!transaction)
-      throw new NotFoundException(`Transaction #${id} not found`);
-
-    // Hitung perubahan saldo berdasarkan tipe transaksi
     const oldAmount = Number(transaction.amount ?? 0);
     const newAmount = Number(updateTransactionDto.amount ?? 0);
-    const amountDiff = newAmount - oldAmount;
 
-    let balanceChange: number;
-    if (updateTransactionDto.type === 'INCOME') {
-      balanceChange = amountDiff;
-    } else {
-      balanceChange = -amountDiff;
-    }
+    // Menggunakan provider custom untuk kalkulasi
+    const balanceChange = this.balanceCalc.calculateBalanceChange(
+      oldAmount,
+      newAmount,
+      transaction.type,
+    );
 
     return this.transactionsRepository.update(
       id,
@@ -82,9 +82,13 @@ export class TransactionsService {
     if (!transaction)
       throw new NotFoundException(`Transaction #${id} not found`);
 
-    // Reverse operasi: INCOME dikurangi, EXPENSE ditambah
     const amount = Number(transaction.amount ?? 0);
-    const balanceChange = transaction.type === 'INCOME' ? -amount : amount;
+
+    // Menggunakan provider custom untuk kalkulasi reverse
+    const balanceChange = this.balanceCalc.calculateReverseBalanceChange(
+      amount,
+      transaction.type,
+    );
 
     return this.transactionsRepository.remove(
       id,
