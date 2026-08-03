@@ -61,6 +61,14 @@ export class UsersService {
     return findUser;
   }
 
+  async findByIdForAuth(id: number) {
+    const user = await this.usersRepository.findOne(id);
+
+    if (!user) throw new NotFoundException(`User #${id} not found`);
+
+    return user;
+  }
+
   async update(
     id: number,
     currentUser: TempUser,

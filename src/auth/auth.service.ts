@@ -71,7 +71,7 @@ export class AuthService {
   }
 
   async refreshTokens(userId: number, refreshToken: string) {
-    const user = await this.usersService.findOne(userId);
+    const user = await this.usersService.findByIdForAuth(userId);
     if (!user || !user.refreshToken) {
       throw new ForbiddenException('Akses ditolak');
     }
