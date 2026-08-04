@@ -34,6 +34,17 @@ async function bootstrap() {
     .setDescription('The Fintrack API description')
     .setVersion('1.0')
     .addTag('finance')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth', // This is the security name used by decorators
+    )
     .build();
   const document = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);

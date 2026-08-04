@@ -54,7 +54,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     // Mengaktifkan Logging untuk semua route
     consumer.apply(LoggerMiddleware, MaintenanceCheckMiddleware).forRoutes({
-      path: '*',
+      path: '{*path}',
       method: RequestMethod.ALL,
     });
   }

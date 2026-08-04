@@ -11,7 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { Role } from '../generated/prisma/enums';
 
 export type TempUser = {
-  id: number;
+  sub: number;
   role: Role;
 };
 
@@ -20,7 +20,7 @@ export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
   private checkOwnership(currentUser: TempUser, targetId: number) {
-    if (currentUser.role !== Role.ADMIN && currentUser.id !== targetId) {
+    if (currentUser.role !== Role.ADMIN && currentUser.sub !== targetId) {
       throw new ForbiddenException(
         'Akses ditolak: Anda hanya dapat mengakses data Anda sendiri',
       );

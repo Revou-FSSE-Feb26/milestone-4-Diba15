@@ -9,6 +9,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '../../generated/prisma/enums';
 
 export class RegisterDto {
+  // ID for postman test only
+  @IsOptional()
+  id?: number;
+
   @IsString()
   @IsNotEmpty()
   @ApiProperty({

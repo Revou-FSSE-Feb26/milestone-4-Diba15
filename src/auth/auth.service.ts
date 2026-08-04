@@ -70,6 +70,10 @@ export class AuthService {
     return await this.usersService.create(registerDto);
   }
 
+  async me(userId: number) {
+    return this.usersService.findByIdForAuth(userId);
+  }
+
   async refreshTokens(userId: number, refreshToken: string) {
     const user = await this.usersService.findByIdForAuth(userId);
     if (!user || !user.refreshToken) {

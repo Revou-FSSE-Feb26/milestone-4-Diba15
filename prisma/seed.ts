@@ -45,7 +45,7 @@ async function main() {
       name: 'Siti Aminah',
       email: 'siti.aminah@email.com',
       password: sitiPassword,
-      role: Role.ADMIN,
+      role: Role.USER,
       createdAt: new Date('2026-05-03T09:15:00.000Z'),
     },
   });

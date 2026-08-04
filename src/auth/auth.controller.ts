@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { Throttle } from '@nestjs/throttler';
 
@@ -50,6 +50,7 @@ export class AuthController {
 
   @Get('me')
   @ApiOperation({ summary: 'Get current user profile' })
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 200,
@@ -75,16 +76,13 @@ export class AuthController {
   ) {
     return {
       message: 'Get Profile Success',
-      user: {
-        id: req.user.sub,
-        email: req.user.email,
-        role: req.user.role,
-      },
+      user: this.authService.me(req.user.sub),
     };
   }
 
   @Post('logout')
   @ApiOperation({ summary: 'Logout user' })
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 200,
@@ -96,6 +94,7 @@ export class AuthController {
 
   @Post('refresh-token')
   @ApiOperation({ summary: 'Refresh token' })
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtRefreshGuard)
   @ApiResponse({
     status: 200,

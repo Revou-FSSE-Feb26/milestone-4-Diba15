@@ -11,12 +11,13 @@ import {
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ParseIntPipe } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../generated/prisma/enums';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 
+@ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UsersController {
@@ -41,7 +42,7 @@ export class UsersController {
   })
   @UseGuards(JwtAuthGuard)
   findOne(
-    @Req() req: { user: { id: number; role: Role } },
+    @Req() req: { user: { sub: number; role: Role } },
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.usersService.findOne(id, req.user);
@@ -59,7 +60,7 @@ export class UsersController {
   })
   @UseGuards(JwtAuthGuard)
   update(
-    @Req() req: { user: { id: number; role: Role } },
+    @Req() req: { user: { sub: number; role: Role } },
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
@@ -78,7 +79,7 @@ export class UsersController {
   })
   @UseGuards(JwtAuthGuard)
   remove(
-    @Req() req: { user: { id: number; role: Role } },
+    @Req() req: { user: { sub: number; role: Role } },
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.usersService.remove(+id, req.user);
