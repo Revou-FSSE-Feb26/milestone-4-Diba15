@@ -5,7 +5,12 @@
  * - APP_GUARD digunakan untuk mengatur batasan akses
  */
 
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -17,6 +22,7 @@ import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { MaintenanceCheckMiddleware } from './common/middleware/maintenance-check.middleware';
 
 @Module({
   imports: [
@@ -24,7 +30,7 @@ import { APP_GUARD } from '@nestjs/core';
       {
         name: 'default',
         ttl: 60 * 1000,
-        limit: 100,
+        limit: 10,
       },
     ]),
     UsersModule,
@@ -47,6 +53,9 @@ export class AppModule implements NestModule {
   // Method akan dipanggil otomatis ketika melakukan request
   configure(consumer: MiddlewareConsumer) {
     // Mengaktifkan Logging untuk semua route
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(LoggerMiddleware, MaintenanceCheckMiddleware).forRoutes({
+      path: '{*path}',
+      method: RequestMethod.ALL,
+    });
   }
 }

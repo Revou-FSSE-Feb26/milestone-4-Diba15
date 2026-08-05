@@ -11,7 +11,8 @@ import * as bcrypt from 'bcrypt';
 import { Role } from '../generated/prisma/enums';
 
 export type TempUser = {
-  id: number;
+  sub: number;
+  email: string;
   role: Role;
 };
 
@@ -20,7 +21,7 @@ export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
   private checkOwnership(currentUser: TempUser, targetId: number) {
-    if (currentUser.role !== Role.ADMIN && currentUser.id !== targetId) {
+    if (currentUser.role !== Role.ADMIN && currentUser.sub !== targetId) {
       throw new ForbiddenException(
         'Akses ditolak: Anda hanya dapat mengakses data Anda sendiri',
       );
@@ -62,7 +63,7 @@ export class UsersService {
   }
 
   async findByIdForAuth(id: number) {
-    const user = await this.usersRepository.findOne(id);
+    const user = await this.usersRepository.findForAuth(id);
 
     if (!user) throw new NotFoundException(`User #${id} not found`);
 

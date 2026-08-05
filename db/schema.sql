@@ -11,7 +11,9 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role user_role NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    refresh_token VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Buat tabel accounts
@@ -22,6 +24,7 @@ CREATE TABLE accounts (
     type account_type NOT NULL,
     balance NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_account_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE -- Menggunakan CASCADE untuk menghapus akun saat pengguna dihapus
 );
 
@@ -29,7 +32,9 @@ CREATE TABLE accounts (
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    type category_type NOT NULL
+    type category_type NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Buat tabel transactions
@@ -43,6 +48,7 @@ CREATE TABLE transactions (
     description TEXT,
     transaction_date TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_transaction_account FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE, -- Menggunakan CASCADE untuk menghapus transaksi saat akun dihapus
     CONSTRAINT fk_transaction_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT -- Menggunakan Restrict untuk menghindari penghapusan kategori yang digunakan dalam transaksi
 );

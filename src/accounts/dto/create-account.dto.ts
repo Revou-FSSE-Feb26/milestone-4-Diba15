@@ -18,14 +18,6 @@ export class CreateAccountDto {
   })
   id: number;
 
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty({
-    example: 1,
-    description: 'ID of user',
-  })
-  userId: number;
-
   @IsString()
   @IsNotEmpty()
   @ApiProperty({

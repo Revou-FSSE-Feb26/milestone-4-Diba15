@@ -8,6 +8,13 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { Role } from '../generated/prisma/enums';
+
+export type TempUser = {
+  sub: number;
+  email: string;
+  role: Role;
+};
 
 @Injectable()
 export class AuthService {
@@ -68,6 +75,10 @@ export class AuthService {
 
   async register(registerDto: RegisterDto) {
     return await this.usersService.create(registerDto);
+  }
+
+  async me(tempUser: TempUser) {
+    return await this.usersService.findOne(tempUser.sub, tempUser);
   }
 
   async refreshTokens(userId: number, refreshToken: string) {

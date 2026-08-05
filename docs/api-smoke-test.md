@@ -1,51 +1,111 @@
-# API SMOKE TEST DOCUMENTATION
+# Smoke Test — FinTrack API
 
-### INTRODUCTION
+| Metadata                 | Detail                                                   |
+|--------------------------|----------------------------------------------------------|
+| **Tanggal**              | 2026-08-05 11:15 WIB                                     |
+| **Collection Variables** | Fintrack                                                 |
+| **base_url**             | https://milestone-4-diba15-production.up.railway.app/api |
+| **Commit**               | main (latest)                                            |
+| **Dijalankan oleh**      | Dimas Bagas Saputro                                      |
 
-This documentation is for smoke testing the API endpoints of the Fintrack application. The smoke test is a basic test to
-ensure that the API is working correctly and that all endpoints are accessible.
+---
 
-### LIMITATIONS
+## 🔧 Collection & Environment Variables
 
-Current smoke tests do not cover all edge cases, such as **missing JSON data** or **insufficient balance** during
-account creation.
+| **Variable Name** | **Description / Default Value**                                                     |
+|-------------------|-------------------------------------------------------------------------------------|
+| `deploy-link`     | `http://localhost:3000/api` (Local Environment)                                     |
+| `baseUrl`         | `https://milestone-4-diba15-production.up.railway.app/api` (Production Environment) |
+| `baseId`          | `99` (ID acuan untuk pengujian smoke test)                                          |
+| `access_token`    | Auto-saved pada saat Login / `Bearer {{access_token}}`                              |
+| `refresh_token`   | Auto-saved pada saat Login / `Bearer {{refresh_token}}`                             |
 
-### COLLECTION VARIABLES
+---
 
-Don't change this after you import the collection in postman.
+## 📊 Hasil Pengujian Smoke Test
 
-| **Name**   | **Value**                                                |
-|------------|----------------------------------------------------------|
-| local-link | http://localhost:3000/api                                |
-| baseUrl    | https://milestone-4-diba15-production.up.railway.app/api |
-| baseId     | 99                                                       |
+| #  | Endpoint           | Method                        | Ekspektasi                                      | Hasil | Catatan                          |
+|----|--------------------|-------------------------------|-------------------------------------------------|-------|----------------------------------|
+| 1  | `/docs`            | GET                           | 200, server merespons (Swagger UI aktif)        | ✅    | API Dokumentasi                  |
+| 2  | `/accounts`        | GET                           | 200, body array, panjang ≥ 1 (bukti seed jalan) | ✅    | Memuat 6 data akun               |
+| 3  | `/accounts/1`      | GET                           | 200, body punya `id`, `name`, `balance`         | ✅    | Detail akun id 1                 |
+| 4  | `/accounts/9999`   | GET                           | 404, bukan 200 dengan body kosong               | ✅    | Handled 404 Not Found            |
+| 5  | `/categories`      | GET                           | 200, array, panjang ≥ 6                         | ✅    | Memuat 6 kategori master         |
+| 6  | `/transactions`    | POST                          | 201, body punya `id` hasil generate DB          | ✅    | Berhasil mencatat transaksi      |
+| 7  | `/transactions`    | POST (body `amount: -1000`)   | 400, pesan `amount must be a positive number`   | ✅    | Validasi DTO bekerja             |
+| 8  | `/transactions`    | POST (body field asing `foo`) | 400 (`forbidNonWhitelisted` aktif)              | ✅    | Stripping / Blocking field liar  |
+| 9  | `/accounts/1`      | GET                           | 200, item punya objek `user` & `transactions`   | ✅    | Bukti relational query `include` |
+| 10 | `/transactions/99` | DELETE                        | 200, membersihkan data uji dari langkah 6       | ✅    | Data uji dibersihkan             |
 
-### TEST RUN
+---
 
-|             |                                                          |
-|-------------|----------------------------------------------------------|
-| Date        | 2026-08-02 12:41 WIB                                     |
-| Environment | Collection Variable / none                               |
-| baseUrl     | https://milestone-4-diba15-production.up.railway.app/api |
+## 🎯 Kesimpulan
 
-### ENDPOINT SMOKE TEST IN POSTMAN
+**GO** — **10/10 PASS**. Deploy dinyatakan sehat dan layak beroperasi di lingkungan Production.
 
-| **#** | **METHOD**  | **DESCRIPTION**                                                                                                                                       | **EXPECTATION**                                                                                                            | **RESULT** |
-|-------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|------------|
-| 1     | GET /       | For all endpoint in getAll method.  <br>Use iteration some for found item with ID 99, and use name or description because return data not include ID. | Status 200 and  <br>Item with ID 99 Found                                                                                  | ✅         |
-| 2     | GET /:id    | For all endpoint in getWithId method.                                                                                                                 | Status 200                                                                                                                 | ✅         |
-| 3     | POST /      | For all endpoint in postItem method.                                                                                                                  | Status code is 201 or 200  <br>Response time is less than 3000ms  <br>Response body is not empty  <br>Content-Type is JSON | ✅         |
-| 4     | PATCH /:id  | For all endpoint in patchItem / editItem method.                                                                                                      | Status code is 200  <br>Response time is less than 3000ms  <br>Response body is not empty  <br>Content-Type is JSON        | ✅         |
-| 5     | DELETE /:id | For all endpoint in deleteItem method.                                                                                                                | Status code is 200 or 204  <br>Response time is less than 3000ms                                                           | ✅         |
+---
 
-### HOW TO RUN THE TEST IN POSTMAN JSON COLLECTION
+## 🔍 Temuan & Catatan Tambahan
 
-1. Open Postman
-2. Import the collection from the file `fintrack.postman_collection.json`
-3. Don't change the variable in collections
-4. Right click and Run the collection with name Scenario Test E2E
-5. Click start run and wait until finish
+- Seluruh endpoint terproteksi JWT mengembalikan **401 Unauthorized** jika token tidak disertakan.
+- Endpoint khusus Admin (`GET /users`) merespons **403 Forbidden** bagi role non-admin.
 
-### CONCLUSION
+---
 
-All 51/51 test pass. Deployed backend don't have a problem with all endpoint and transaction scenarios. 
+## 📚 Referensi Endpoint & Contoh Error Handling
+
+### 1. Auths (`/auth`)
+
+* **`POST /auth/login`**
+    * `201 Created`: Login sukses mengembalikan `access_token` & `user`.
+    * `400 Bad Request`: Validasi payload gagal.
+    * `401 Unauthorized`: Kredensial tidak valid (`"Invalid credentials"`).
+    * `429 Too Many Requests`: Batas login terlampaui (`"ThrottlerException"`).
+* **`POST /auth/register`**
+    * `201 Created`: Registrasi berhasil.
+    * `400 Bad Request`: Format DTO salah.
+    * `409 Conflict`: Email sudah terdaftar.
+* **`GET /auth/me`**
+    * `200 OK`: Profile user login diambil.
+    * `401 Unauthorized`: Token tidak ada/kedaluwarsa.
+* **`POST /auth/refresh-token`**
+    * `201 Created`: Token baru diterbitkan.
+    * `403 Forbidden`: Refresh token tidak valid.
+* **`POST /auth/logout`**
+    * `201 Created`: Logout berhasil (`{"message": "Berhasil logout"}`).
+
+### 2. Users (`/users`)
+
+* **`GET /users` (Admin Only)**
+    * `200 OK`: Daftar seluruh pengguna.
+    * `403 Forbidden`: Role bukan ADMIN.
+* **`GET /users/:id`**
+    * `200 OK`: Detail pengguna.
+    * `403 Forbidden`: Akses data user lain.
+    * `404 Not Found`: User tidak ditemukan.
+* **`PATCH /users/:id`** & **`DELETE /users/:id`**
+    * `200 OK`: User diubah / dihapus.
+
+### 3. Accounts (`/accounts`)
+
+* **`POST /accounts`**: `201 Created`
+* **`GET /accounts`**: `200 OK` (Per-user ownership filter)
+* **`GET /accounts/:id`**: `200 OK` / `404 Not Found`
+* **`PATCH /accounts/:id`**: `200 OK` / `400 Bad Request`
+* **`DELETE /accounts/:id`**: `200 OK` / `404 Not Found`
+
+### 4. Categories (`/categories`)
+
+* **`POST /categories`**: `201 Created`
+* **`GET /categories`**: `200 OK`
+* **`GET /categories/:id`**: `200 OK` / `404 Not Found`
+* **`PATCH /categories/:id`**: `200 OK` / `404 Not Found`
+* **`DELETE /categories/:id`**: `200 OK` / `404 Not Found`
+
+### 5. Transactions (`/transactions`)
+
+* **`POST /transactions`**: `201 Created` / `400 Insufficient funds`
+* **`GET /transactions`**: `200 OK`
+* **`GET /transactions/:id`**: `200 OK` / `404 Not Found`
+* **`PATCH /transactions/:id`**: `200 OK` / `400 Bad Request`
+* **`DELETE /transactions/:id`**: `200 OK` / `404 Not Found` (Reverse balance)

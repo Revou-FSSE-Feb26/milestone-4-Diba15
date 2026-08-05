@@ -12,7 +12,7 @@ async function bootstrap() {
   app.use(helmet());
 
   app.enableCors({
-    origin: process.env.CLIENT_ORIGIN || '*',
+    origin: process.env.CORS_ORIGIN || '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -34,6 +34,17 @@ async function bootstrap() {
     .setDescription('The Fintrack API description')
     .setVersion('1.0')
     .addTag('finance')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth', // This is the security name used by decorators
+    )
     .build();
   const document = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);

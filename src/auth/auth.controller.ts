@@ -3,9 +3,10 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { Throttle } from '@nestjs/throttler';
+import { Role } from '../generated/prisma/enums';
 
 @Controller('auth')
 export class AuthController {
@@ -33,7 +34,7 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'Login success',
   })
   @ApiResponse({
@@ -50,6 +51,7 @@ export class AuthController {
 
   @Get('me')
   @ApiOperation({ summary: 'Get current user profile' })
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 200,
@@ -59,32 +61,29 @@ export class AuthController {
     status: 401,
     description: 'Unauthorized',
   })
-  @ApiResponse({
-    status: 400,
-    description: 'Invalid input',
-  })
-  @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
-  })
-  me(
+  async me(
     @Req()
     req: {
-      user: { sub: number; email: string; password: string; role: string };
+      user: { sub: number; email: string; role: Role };
     },
   ) {
     return {
       message: 'Get Profile Success',
-      user: req.user,
+      user: await this.authService.me(req.user),
     };
   }
 
   @Post('logout')
   @ApiOperation({ summary: 'Logout user' })
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard)
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'Logout success',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   logout(@Req() req: { user: { sub: number } }) {
     return this.authService.logout(req.user.sub);
@@ -92,10 +91,19 @@ export class AuthController {
 
   @Post('refresh-token')
   @ApiOperation({ summary: 'Refresh token' })
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtRefreshGuard)
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'Refresh success',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden: Invalid refresh token',
   })
   refreshToken(@Req() req: { user: { sub: number; refreshToken: string } }) {
     const userId = req.user.sub;

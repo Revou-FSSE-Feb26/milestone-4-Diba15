@@ -12,11 +12,11 @@ import {
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth('JWT-auth')
+@UseGuards(JwtAuthGuard)
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
@@ -32,8 +32,8 @@ export class CategoriesController {
     description: 'Invalid input',
   })
   @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
+    status: 401,
+    description: 'Unauthorized',
   })
   create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoriesService.create(createCategoryDto);
@@ -46,12 +46,8 @@ export class CategoriesController {
     description: 'List of categories',
   })
   @ApiResponse({
-    status: 404,
-    description: 'Categories not found',
-  })
-  @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
+    status: 401,
+    description: 'Unauthorized',
   })
   findAll() {
     return this.categoriesService.findAll();
@@ -64,12 +60,12 @@ export class CategoriesController {
     description: 'Category by ID',
   })
   @ApiResponse({
-    status: 404,
-    description: 'Category not found',
+    status: 401,
+    description: 'Unauthorized',
   })
   @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
+    status: 404,
+    description: 'Category not found',
   })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.categoriesService.findOne(+id);
@@ -82,12 +78,16 @@ export class CategoriesController {
     description: 'Category updated',
   })
   @ApiResponse({
-    status: 404,
-    description: 'Category not found',
+    status: 400,
+    description: 'Invalid input',
   })
   @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Category not found',
   })
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -103,12 +103,12 @@ export class CategoriesController {
     description: 'Category deleted',
   })
   @ApiResponse({
-    status: 404,
-    description: 'Category not found',
+    status: 401,
+    description: 'Unauthorized',
   })
   @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
+    status: 404,
+    description: 'Category not found',
   })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.categoriesService.remove(+id);
