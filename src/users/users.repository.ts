@@ -32,10 +32,15 @@ export class UsersRepository {
         name: true,
         email: true,
         role: true,
-        refreshToken: true,
         createdAt: true,
         accounts: true,
       },
+    });
+  }
+
+  findForAuth(id: number) {
+    return this.prisma.user.findUnique({
+      where: { id },
     });
   }
 

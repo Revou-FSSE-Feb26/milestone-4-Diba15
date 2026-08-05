@@ -12,6 +12,7 @@ import { Role } from '../generated/prisma/enums';
 
 export type TempUser = {
   sub: number;
+  email: string;
   role: Role;
 };
 
@@ -62,7 +63,7 @@ export class UsersService {
   }
 
   async findByIdForAuth(id: number) {
-    const user = await this.usersRepository.findOne(id);
+    const user = await this.usersRepository.findForAuth(id);
 
     if (!user) throw new NotFoundException(`User #${id} not found`);
 

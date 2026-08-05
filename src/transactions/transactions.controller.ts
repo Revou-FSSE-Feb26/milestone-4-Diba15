@@ -28,12 +28,23 @@ export class TransactionsController {
     status: 201,
     description: 'Transaction created',
   })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input or insufficient funds',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Account not found or invalid permission',
+  })
   create(
-    @Req() req: { user: { id: number } },
+    @Req() req: { user: { sub: number } },
     @Body() createTransactionDto: CreateTransactionDto,
   ) {
-    const userId = req.user.id;
-    return this.transactionsService.create(userId, createTransactionDto);
+    return this.transactionsService.create(req.user.sub, createTransactionDto);
   }
 
   @Get()
@@ -42,8 +53,12 @@ export class TransactionsController {
     status: 200,
     description: 'List of transactions',
   })
-  findAll(@Req() req: { user: { id: number } }) {
-    return this.transactionsService.findAll(req.user.id);
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  findAll(@Req() req: { user: { sub: number } }) {
+    return this.transactionsService.findAll(req.user.sub);
   }
 
   @Get(':id')
@@ -53,18 +68,18 @@ export class TransactionsController {
     description: 'Transaction found',
   })
   @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
     status: 404,
     description: 'Transaction not found',
   })
-  @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
-  })
   findOne(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: { user: { id: number } },
+    @Req() req: { user: { sub: number } },
   ) {
-    return this.transactionsService.findOne(id, req.user.id);
+    return this.transactionsService.findOne(id, req.user.sub);
   }
 
   @Patch(':id')
@@ -74,21 +89,25 @@ export class TransactionsController {
     description: 'Transaction updated',
   })
   @ApiResponse({
-    status: 404,
-    description: 'Transaction not found',
+    status: 400,
+    description: 'Invalid input',
   })
   @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Transaction not found',
   })
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTransactionDto: UpdateTransactionDto,
-    @Req() req: { user: { id: number } },
+    @Req() req: { user: { sub: number } },
   ) {
     return this.transactionsService.update(
       id,
-      req.user.id,
+      req.user.sub,
       updateTransactionDto,
     );
   }
@@ -100,17 +119,17 @@ export class TransactionsController {
     description: 'Transaction deleted',
   })
   @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
     status: 404,
     description: 'Transaction not found',
   })
-  @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
-  })
   remove(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: { user: { id: number } },
+    @Req() req: { user: { sub: number } },
   ) {
-    return this.transactionsService.remove(id, req.user.id);
+    return this.transactionsService.remove(id, req.user.sub);
   }
 }

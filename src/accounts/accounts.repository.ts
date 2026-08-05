@@ -7,13 +7,18 @@ import { PrismaService } from '../prisma/prisma.service';
 export class AccountsRepository {
   constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.account.findMany();
+  findAll(userId: number) {
+    return this.prisma.account.findMany({
+      where: { userId: userId },
+    });
   }
 
-  findOne(id: number) {
-    return this.prisma.account.findUnique({
-      where: { id },
+  findOne(id: number, userId: number) {
+    return this.prisma.account.findFirst({
+      where: {
+        id: id,
+        userId: userId,
+      },
       include: {
         user: {
           select: {
@@ -27,9 +32,12 @@ export class AccountsRepository {
     });
   }
 
-  create(createAccountDto: CreateAccountDto) {
+  create(userId: number, createAccountDto: CreateAccountDto) {
     return this.prisma.account.create({
-      data: createAccountDto,
+      data: {
+        userId,
+        ...createAccountDto,
+      },
     });
   }
 

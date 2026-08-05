@@ -29,6 +29,14 @@ export class UsersController {
     status: 200,
     description: 'List of users',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden: Admin only',
+  })
   @Roles(Role.ADMIN)
   findAll() {
     return this.usersService.findAll();
@@ -40,9 +48,21 @@ export class UsersController {
     status: 200,
     description: 'User found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden: Access denied to other user data',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
   @UseGuards(JwtAuthGuard)
   findOne(
-    @Req() req: { user: { sub: number; role: Role } },
+    @Req() req: { user: { sub: number; email: string; role: Role } },
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.usersService.findOne(id, req.user);
@@ -55,12 +75,24 @@ export class UsersController {
     description: 'User updated',
   })
   @ApiResponse({
+    status: 400,
+    description: 'Invalid input',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden: Access denied to other user data',
+  })
+  @ApiResponse({
     status: 404,
     description: 'User not found',
   })
   @UseGuards(JwtAuthGuard)
   update(
-    @Req() req: { user: { sub: number; role: Role } },
+    @Req() req: { user: { sub: number; email: string; role: Role } },
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
@@ -74,12 +106,20 @@ export class UsersController {
     description: 'User deleted',
   })
   @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden: Access denied to other user data',
+  })
+  @ApiResponse({
     status: 404,
     description: 'User not found',
   })
   @UseGuards(JwtAuthGuard)
   remove(
-    @Req() req: { user: { sub: number; role: Role } },
+    @Req() req: { user: { sub: number; email: string; role: Role } },
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.usersService.remove(+id, req.user);

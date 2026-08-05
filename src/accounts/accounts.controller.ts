@@ -8,6 +8,7 @@ import {
   Post,
   ParseIntPipe,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
@@ -32,11 +33,14 @@ export class AccountsController {
     description: 'Invalid input',
   })
   @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
+    status: 401,
+    description: 'Unauthorized',
   })
-  create(@Body() createAccountDto: CreateAccountDto) {
-    return this.accountsService.create(createAccountDto);
+  create(
+    @Req() req: { user: { sub: number } },
+    @Body() createAccountDto: CreateAccountDto,
+  ) {
+    return this.accountsService.create(req.user.sub, createAccountDto);
   }
 
   @Get()
@@ -46,71 +50,78 @@ export class AccountsController {
     description: 'List of accounts',
   })
   @ApiResponse({
-    status: 404,
-    description: 'Accounts not found',
+    status: 401,
+    description: 'Unauthorized',
   })
-  @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
-  })
-  findAll() {
-    return this.accountsService.findAll();
+  findAll(@Req() req: { user: { sub: number } }) {
+    return this.accountsService.findAll(req.user.sub);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Find account by ID' })
   @ApiResponse({
     status: 200,
-    description: 'Accounts found',
+    description: 'Account found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   @ApiResponse({
     status: 404,
-    description: 'Accounts not found',
+    description: 'Account not found',
   })
-  @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
-  })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.accountsService.findOne(id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: { user: { sub: number } },
+  ) {
+    return this.accountsService.findOne(id, req.user.sub);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update account' })
   @ApiResponse({
     status: 200,
-    description: 'Accounts updated',
+    description: 'Account updated',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   @ApiResponse({
     status: 404,
-    description: 'Accounts not found',
-  })
-  @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
+    description: 'Account not found',
   })
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAccountDto: UpdateAccountDto,
+    @Req() req: { user: { sub: number } },
   ) {
-    return this.accountsService.update(id, updateAccountDto);
+    return this.accountsService.update(id, req.user.sub, updateAccountDto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete account' })
   @ApiResponse({
     status: 200,
-    description: 'Accounts deleted',
+    description: 'Account deleted',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   @ApiResponse({
     status: 404,
-    description: 'Accounts not found',
+    description: 'Account not found',
   })
-  @ApiResponse({
-    status: 500,
-    description: 'Internal server error',
-  })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.accountsService.remove(id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: { user: { sub: number } },
+  ) {
+    return this.accountsService.remove(id, req.user.sub);
   }
 }

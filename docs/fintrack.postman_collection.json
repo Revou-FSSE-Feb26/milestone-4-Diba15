@@ -1,19 +1,11 @@
 {
   "info": {
-    "_postman_id": "c4896c69-f7ed-4770-86f2-605f88ec6441",
+    "_postman_id": "8f126900-873f-4045-b064-b4419a18a7c0",
     "name": "Fintrack",
     "description": "## Milestone 4 & 5 - Fintrack API Smoke Tests & Error Handling Documentation\n\nKoleksi ini berisi pengujian mandiri (*smoke testing*) untuk seluruh endpoint REST API Fintrack beserta contoh respon sukses dan berbagai skenario error handling bawaan NestJS backend.\n\n### Modul Utama:\n- **Auths**: Register, Login (Rate Limited), Me, Refresh Token, Logout.\n- **Users**: Listing (Admin Only), Detail User, Update, & Delete.\n- **Accounts**: Account Management (BANK, E_WALLET, CASH).\n- **Categories**: Category Management (INCOME, EXPENSE).\n- **Transactions**: Financial Transactions dengan pengecekan saldo (*Insufficient funds*).",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "auth": {
-    "type": "bearer",
-    "bearer": [
-      {
-        "key": "token",
-        "value": "{{access_token}}",
-        "type": "string"
-      }
-    ]
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "10974026",
+    "_collection_link": "https://go.postman.co/collection/10974026-8f126900-873f-4045-b064-b4419a18a7c0?source=collection_link"
   },
   "item": [
     {
@@ -26,12 +18,13 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
                   "pm.test(\"Response time is less than 3000ms\", function () { pm.expect(pm.response.responseTime).to.be.below(3000); });",
-                  "if (pm.response.code === 200) {",
+                  "if (pm.response.code === 201) {",
                   "    var jsonData = pm.response.json();",
+                  "    var refreshToken = jsonData?.user?.refreshToken;",
                   "    if (jsonData.access_token) { pm.collectionVariables.set(\"access_token\", jsonData.access_token); }",
-                  "    if (jsonData.refresh_token) { pm.collectionVariables.set(\"refresh_token\", jsonData.refresh_token); }",
+                  "    if (refreshToken) { pm.collectionVariables.set(\"refresh_token\", refreshToken); }",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -51,7 +44,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"john2@example.com\",\n    \"password\": \"password123\"\n}",
+              "raw": "{\n    \"email\": \"siti.aminah@email.com\",\n    \"password\": \"siti456\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -71,46 +64,76 @@
           },
           "response": [
             {
-              "name": "200 Success - Login",
+              "name": "201 Created - Login Success",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"email\": \"siti.aminah@email.com\",\n    \"password\": \"siti456\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/auth/login",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
                   ]
                 }
               },
-              "status": "OK",
-              "code": 200,
+              "status": "Created",
+              "code": 201,
               "_postman_previewlanguage": "json",
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"access_token\": \"jwt_access_token_here\",\n    \"user\": {\n        \"id\": 1,\n        \"email\": \"john2@example.com\"\n    }\n}"
+              "body": "{\n    \"access_token\": \"{{supabase_service_role_api_key_0hsq}}...\",\n    \"user\": {\n        \"id\": 2,\n        \"email\": \"siti.aminah@email.com\",\n        \"refreshToken\": \"{{supabase_service_role_api_key_0hsq}}...\"\n    }\n}"
             },
             {
               "name": "400 Bad Request - Invalid Payload",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/auth/login",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
                   ]
                 }
               },
@@ -120,7 +143,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -130,15 +153,30 @@
               "name": "401 Unauthorized - Invalid Credentials",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"email\": \"siti.aminah@email.com\",\n    \"password\": \"wrongpassword\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/auth/login",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
                   ]
                 }
               },
@@ -148,25 +186,40 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 401,\n    \"message\": \"Invalid credentials\",\n    \"error\": \"Unauthorized\"\n}"
+              "body": "{\n    \"message\": \"Invalid credentials\",\n    \"error\": \"Unauthorized\",\n    \"statusCode\": 401\n}"
             },
             {
               "name": "429 Too Many Requests - Rate Limit",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"email\": \"siti.aminah@email.com\",\n    \"password\": \"siti456\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/auth/login",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
                   ]
                 }
               },
@@ -176,7 +229,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -191,7 +244,7 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 201 or 200\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });",
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
                   "pm.test(\"Response time is less than 3000ms\", function () { pm.expect(pm.response.responseTime).to.be.below(3000); });"
                 ],
                 "type": "text/javascript"
@@ -211,7 +264,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\": \"Johny Doe 99\",\n    \"email\": \"john2@example.com\",\n    \"password\": \"password123\"\n}",
+              "raw": "{\n    \"name\": \"Johny Doe 99\",\n    \"email\": \"john99@example.com\",\n    \"password\": \"password123\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -234,15 +287,30 @@
               "name": "201 Created - User Registered",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"name\": \"Johny Doe 99\",\n    \"email\": \"john99@example.com\",\n    \"password\": \"password123\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/auth/register",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register"
                   ]
                 }
               },
@@ -252,25 +320,40 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"id\": 1,\n    \"name\": \"Johny Doe 99\",\n    \"email\": \"john2@example.com\",\n    \"role\": \"USER\"\n}"
+              "body": "{\n    \"name\": \"Johny Doe 99\",\n    \"email\": \"john99@example.com\",\n    \"role\": \"USER\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\"\n}"
             },
             {
               "name": "400 Bad Request - Invalid DTO",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/auth/register",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register"
                   ]
                 }
               },
@@ -280,25 +363,40 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 400,\n    \"message\": [\n        \"email must be an email\",\n        \"password must be longer than or equal to 6 characters\"\n    ],\n    \"error\": \"Bad Request\"\n}"
+              "body": "{\n    \"message\": [\n        \"name should not be empty\",\n        \"name must be a string\",\n        \"email should not be empty\",\n        \"email must be an email\",\n        \"password should not be empty\",\n        \"password must be a string\"\n    ],\n    \"error\": \"Bad Request\",\n    \"statusCode\": 400\n}"
             },
             {
               "name": "409 Conflict - User Already Exists",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"name\": \"Siti Aminah\",\n    \"email\": \"siti.aminah@email.com\",\n    \"password\": \"siti456\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/auth/register",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register"
                   ]
                 }
               },
@@ -308,11 +406,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 409,\n    \"message\": \"User already exists\",\n    \"error\": \"Conflict\"\n}"
+              "body": "{\n    \"message\": \"User already exists\",\n    \"error\": \"Conflict\",\n    \"statusCode\": 409\n}"
             }
           ]
         },
@@ -333,12 +431,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{deploy-link}}/users/me",
+              "raw": "{{deploy-link}}/auth/me",
               "host": [
                 "{{deploy-link}}"
               ],
               "path": [
-                "users",
+                "auth",
                 "me"
               ]
             }
@@ -347,16 +445,16 @@
             {
               "name": "200 Success - User Profile",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/auth/me",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "me"
                   ]
                 }
               },
@@ -366,25 +464,25 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"message\": \"Get Profile Success\",\n    \"user\": {\n        \"sub\": 1,\n        \"email\": \"john2@example.com\",\n        \"role\": \"USER\"\n    }\n}"
+              "body": "{\n    \"message\": \"Get Profile Success\",\n    \"user\": {\n        \"id\": 2,\n        \"name\": \"Siti Aminah\",\n        \"email\": \"siti.aminah@email.com\",\n        \"role\": \"USER\",\n        \"createdAt\": \"2026-05-03T09:15:00.000Z\",\n        \"accounts\": [\n            {\n                \"id\": 3,\n                \"userId\": 2,\n                \"name\": \"Mandiri Utama\",\n                \"type\": \"BANK\",\n                \"balance\": \"12150000.00\"\n            }\n        ]\n    }\n}"
             },
             {
               "name": "401 Unauthorized - No Token",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/auth/me",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "me"
                   ]
                 }
               },
@@ -394,11 +492,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 401,\n    \"message\": \"Unauthorized\"\n}"
+              "body": "{\n    \"message\": \"Unauthorized\",\n    \"statusCode\": 401\n}"
             }
           ]
         },
@@ -409,9 +507,18 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200 or 201\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });\r",
+                  "\r",
+                  "if (pm.response.code === 201) {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var refreshToken = jsonData?.refreshToken;\r",
+                  "    if (jsonData.access_token) { pm.collectionVariables.set(\"access_token\", jsonData.accessToken); }\r",
+                  "    if (refreshToken) { pm.collectionVariables.set(\"refresh_token\", refreshToken); }\r",
+                  "}"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -441,46 +548,46 @@
           },
           "response": [
             {
-              "name": "200 Success - Token Refreshed",
+              "name": "201 Created - Token Refreshed",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/auth/refresh-token",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "refresh-token"
                   ]
                 }
               },
-              "status": "OK",
-              "code": 200,
+              "status": "Created",
+              "code": 201,
               "_postman_previewlanguage": "json",
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"accessToken\": \"new_access_token_here\",\n    \"refreshToken\": \"new_refresh_token_here\"\n}"
+              "body": "{\n    \"accessToken\": \"{{supabase_service_role_api_key_0hsq}}...\",\n    \"refreshToken\": \"{{supabase_service_role_api_key_0hsq}}...\"\n}"
             },
             {
               "name": "403 Forbidden - Invalid Refresh Token",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/auth/refresh-token",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "refresh-token"
                   ]
                 }
               },
@@ -490,11 +597,39 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
               "body": "{\n    \"statusCode\": 403,\n    \"message\": \"Akses ditolak\",\n    \"error\": \"Forbidden\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{deploy-link}}/auth/refresh-token",
+                  "host": [
+                    "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "refresh-token"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"Unauthorized\",\n    \"statusCode\": 401\n}"
             }
           ]
         },
@@ -505,7 +640,7 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200 or 201\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });"
                 ],
                 "type": "text/javascript"
               }
@@ -527,28 +662,28 @@
           },
           "response": [
             {
-              "name": "200 Success - Logged Out",
+              "name": "201 Created - Logged Out",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/auth/logout",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "logout"
                   ]
                 }
               },
-              "status": "OK",
-              "code": 200,
+              "status": "Created",
+              "code": 201,
               "_postman_previewlanguage": "json",
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -559,14 +694,14 @@
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/auth/logout",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "logout"
                   ]
                 }
               },
@@ -576,11 +711,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 401,\n    \"message\": \"Unauthorized\"\n}"
+              "body": "{\n    \"message\": \"Unauthorized\",\n    \"statusCode\": 401\n}"
             }
           ]
         }
@@ -595,10 +730,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200 or 403\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 403]); });"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
@@ -619,16 +754,15 @@
             {
               "name": "200 Success - List All Users",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users"
                   ]
                 }
               },
@@ -638,25 +772,24 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Johny Doe 99\",\n        \"email\": \"john2@example.com\",\n        \"role\": \"USER\"\n    }\n]"
+              "body": "[\n    {\n        \"name\": \"Rian Wijaya\",\n        \"email\": \"rian.wijaya@email.com\",\n        \"role\": \"USER\",\n        \"createdAt\": \"2026-05-01T08:00:00.000Z\"\n    },\n    {\n        \"name\": \"Siti Aminah\",\n        \"email\": \"siti.aminah@email.com\",\n        \"role\": \"USER\",\n        \"createdAt\": \"2026-05-03T09:15:00.000Z\"\n    },\n    {\n        \"name\": \"Budi Santoso\",\n        \"email\": \"budi.admin@email.com\",\n        \"role\": \"ADMIN\",\n        \"createdAt\": \"2026-05-01T07:30:00.000Z\"\n    }\n]"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users"
                   ]
                 }
               },
@@ -666,7 +799,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -675,16 +808,15 @@
             {
               "name": "403 Forbidden - Non-Admin User",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users"
                   ]
                 }
               },
@@ -694,7 +826,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -708,10 +840,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
@@ -733,16 +865,16 @@
             {
               "name": "200 Success - Get User By ID",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "99"
                   ]
                 }
               },
@@ -752,25 +884,25 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"id\": 99,\n    \"name\": \"Johny Doe 99\",\n    \"email\": \"john2@example.com\",\n    \"role\": \"USER\"\n}"
+              "body": "{\n    \"id\": 99,\n    \"name\": \"Johny Doe 99\",\n    \"email\": \"john99@example.com\",\n    \"role\": \"USER\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\",\n    \"accounts\": []\n}"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "99"
                   ]
                 }
               },
@@ -780,7 +912,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -789,16 +921,16 @@
             {
               "name": "403 Forbidden - Other User Access",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users/1",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "1"
                   ]
                 }
               },
@@ -808,7 +940,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -817,16 +949,16 @@
             {
               "name": "404 Not Found - User Missing",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users/999",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "999"
                   ]
                 }
               },
@@ -836,11 +968,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"User #99 not found\",\n    \"error\": \"Not Found\"\n}"
+              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"User #999 not found\",\n    \"error\": \"Not Found\"\n}"
             }
           ]
         },
@@ -850,10 +982,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
@@ -889,16 +1021,25 @@
             {
               "name": "200 Success - User Updated",
               "originalRequest": {
-                "method": "POST",
-                "header": [],
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"name\": \"Updated 99 ID User\"\n}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "99"
                   ]
                 }
               },
@@ -908,25 +1049,34 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"id\": 99,\n    \"name\": \"Updated 99 ID User\",\n    \"email\": \"john2@example.com\"\n}"
+              "body": "{\n    \"name\": \"Updated 99 ID User\",\n    \"email\": \"john99@example.com\",\n    \"role\": \"USER\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\"\n}"
             },
             {
               "name": "400 Bad Request - Invalid Body",
               "originalRequest": {
-                "method": "POST",
-                "header": [],
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"name\": 12345\n}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "99"
                   ]
                 }
               },
@@ -936,7 +1086,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -945,16 +1095,16 @@
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "PATCH",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "99"
                   ]
                 }
               },
@@ -964,7 +1114,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -973,16 +1123,16 @@
             {
               "name": "403 Forbidden - Other User",
               "originalRequest": {
-                "method": "POST",
+                "method": "PATCH",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users/1",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "1"
                   ]
                 }
               },
@@ -992,7 +1142,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -1001,16 +1151,16 @@
             {
               "name": "404 Not Found - User Missing",
               "originalRequest": {
-                "method": "POST",
+                "method": "PATCH",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users/999",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "999"
                   ]
                 }
               },
@@ -1020,11 +1170,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"User #99 not found\",\n    \"error\": \"Not Found\"\n}"
+              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"User #999 not found\",\n    \"error\": \"Not Found\"\n}"
             }
           ]
         },
@@ -1034,10 +1184,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Status code is 200 or 204\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 204]); });"
-                ],
-                "type": "text/javascript"
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
               }
             }
           ],
@@ -1059,16 +1209,16 @@
             {
               "name": "200 Success - User Deleted",
               "originalRequest": {
-                "method": "POST",
+                "method": "DELETE",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "99"
                   ]
                 }
               },
@@ -1078,25 +1228,25 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"message\": \"User deleted successfully\"\n}"
+              "body": "{\n    \"name\": \"Updated 99 ID User\",\n    \"email\": \"john99@example.com\",\n    \"role\": \"USER\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\"\n}"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "DELETE",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "99"
                   ]
                 }
               },
@@ -1106,7 +1256,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -1115,16 +1265,16 @@
             {
               "name": "403 Forbidden - Other User",
               "originalRequest": {
-                "method": "POST",
+                "method": "DELETE",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users/1",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "1"
                   ]
                 }
               },
@@ -1134,7 +1284,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -1143,16 +1293,16 @@
             {
               "name": "404 Not Found - User Missing",
               "originalRequest": {
-                "method": "POST",
+                "method": "DELETE",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/users/999",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "users",
+                    "999"
                   ]
                 }
               },
@@ -1162,11 +1312,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"User #99 not found\",\n    \"error\": \"Not Found\"\n}"
+              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"User #999 not found\",\n    \"error\": \"Not Found\"\n}"
             }
           ]
         }
@@ -1181,10 +1331,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Status code is 201 or 200\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
-                ],
-                "type": "text/javascript"
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });"
+                ]
               }
             }
           ],
@@ -1198,7 +1348,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\": \"DANA 99\",\n    \"type\": \"E_WALLET\",\n    \"balance\": 1000\n}",
+              "raw": "{\n    \"id\": 99,\n    \"name\": \"DANA 99\",\n    \"type\": \"E_WALLET\",\n    \"balance\": 1000\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1220,15 +1370,23 @@
               "name": "201 Created - Account Created",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"id\": 99,\n    \"name\": \"DANA 99\",\n    \"type\": \"E_WALLET\",\n    \"balance\": 1000\n}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts"
                   ]
                 }
               },
@@ -1238,25 +1396,33 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"id\": 99,\n    \"userId\": 1,\n    \"name\": \"DANA 99\",\n    \"type\": \"E_WALLET\",\n    \"balance\": \"1000.00\"\n}"
+              "body": "{\n    \"id\": 99,\n    \"userId\": 2,\n    \"name\": \"DANA 99\",\n    \"type\": \"E_WALLET\",\n    \"balance\": \"1000.00\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\",\n    \"updatedAt\": \"2026-08-05T10:40:00.000Z\"\n}"
             },
             {
               "name": "400 Bad Request - Validation Error",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts"
                   ]
                 }
               },
@@ -1266,25 +1432,24 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 400,\n    \"message\": [\n        \"name should not be empty\",\n        \"type must be a valid enum value\"\n    ],\n    \"error\": \"Bad Request\"\n}"
+              "body": "{\n    \"statusCode\": 400,\n    \"message\": [\n        \"name should not be empty\",\n        \"name must be a string\",\n        \"type must be a valid enum value\",\n        \"type should not be empty\",\n        \"balance must be a positive number\",\n        \"balance should not be empty\"\n    ],\n    \"error\": \"Bad Request\"\n}"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts"
                   ]
                 }
               },
@@ -1294,7 +1459,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -1308,10 +1473,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
@@ -1332,16 +1497,15 @@
             {
               "name": "200 Success - List Accounts",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts"
                   ]
                 }
               },
@@ -1351,25 +1515,24 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "[\n    {\n        \"id\": 99,\n        \"userId\": 1,\n        \"name\": \"DANA 99\",\n        \"type\": \"E_WALLET\",\n        \"balance\": \"1000.00\"\n    }\n]"
+              "body": "[\n    {\n        \"id\": 3,\n        \"userId\": 2,\n        \"name\": \"Mandiri Utama\",\n        \"type\": \"BANK\",\n        \"balance\": \"12150000.00\",\n        \"createdAt\": \"2026-05-03T09:30:00.000Z\",\n        \"updatedAt\": \"2026-05-03T09:30:00.000Z\"\n    },\n    {\n        \"id\": 4,\n        \"userId\": 2,\n        \"name\": \"Dompet Tunai\",\n        \"type\": \"CASH\",\n        \"balance\": \"450000.00\",\n        \"createdAt\": \"2026-05-03T09:40:00.000Z\",\n        \"updatedAt\": \"2026-05-03T09:40:00.000Z\"\n    }\n]"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts"
                   ]
                 }
               },
@@ -1379,7 +1542,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -1393,10 +1556,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
@@ -1418,16 +1581,16 @@
             {
               "name": "200 Success - Account Detail",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "99"
                   ]
                 }
               },
@@ -1437,25 +1600,25 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"id\": 99,\n    \"userId\": 1,\n    \"name\": \"DANA 99\",\n    \"type\": \"E_WALLET\",\n    \"balance\": \"1000.00\"\n}"
+              "body": "{\n    \"id\": 99,\n    \"userId\": 2,\n    \"name\": \"DANA 99\",\n    \"type\": \"E_WALLET\",\n    \"balance\": \"1000.00\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\",\n    \"updatedAt\": \"2026-08-05T10:40:00.000Z\",\n    \"user\": {\n        \"name\": \"Siti Aminah\",\n        \"email\": \"siti.aminah@email.com\",\n        \"role\": \"USER\"\n    },\n    \"transactions\": []\n}"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "99"
                   ]
                 }
               },
@@ -1465,7 +1628,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -1474,16 +1637,16 @@
             {
               "name": "404 Not Found - Account Missing",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts/999",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "999"
                   ]
                 }
               },
@@ -1493,11 +1656,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Account #99 not found\",\n    \"error\": \"Not Found\"\n}"
+              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Account #999 not found\",\n    \"error\": \"Not Found\"\n}"
             }
           ]
         },
@@ -1507,10 +1670,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
@@ -1546,16 +1709,25 @@
             {
               "name": "200 Success - Account Updated",
               "originalRequest": {
-                "method": "POST",
-                "header": [],
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"name\": \"Edit 99\",\n    \"balance\": 10000\n}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "99"
                   ]
                 }
               },
@@ -1565,25 +1737,34 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"id\": 99,\n    \"userId\": 1,\n    \"name\": \"Edit 99\",\n    \"type\": \"E_WALLET\",\n    \"balance\": \"10000.00\"\n}"
+              "body": "{\n    \"id\": 99,\n    \"userId\": 2,\n    \"name\": \"Edit 99\",\n    \"type\": \"E_WALLET\",\n    \"balance\": \"10000.00\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\",\n    \"updatedAt\": \"2026-08-05T10:40:00.000Z\"\n}"
             },
             {
               "name": "400 Bad Request - Invalid Payload",
               "originalRequest": {
-                "method": "POST",
-                "header": [],
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"balance\": -100\n}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "99"
                   ]
                 }
               },
@@ -1593,7 +1774,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -1602,16 +1783,16 @@
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "PATCH",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "99"
                   ]
                 }
               },
@@ -1621,7 +1802,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -1630,16 +1811,16 @@
             {
               "name": "404 Not Found - Account Missing",
               "originalRequest": {
-                "method": "POST",
+                "method": "PATCH",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts/999",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "999"
                   ]
                 }
               },
@@ -1649,11 +1830,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Account #99 not found\",\n    \"error\": \"Not Found\"\n}"
+              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Account #999 not found\",\n    \"error\": \"Not Found\"\n}"
             }
           ]
         },
@@ -1663,10 +1844,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Status code is 200 or 204\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 204]); });"
-                ],
-                "type": "text/javascript"
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
               }
             }
           ],
@@ -1688,16 +1869,16 @@
             {
               "name": "200 Success - Account Deleted",
               "originalRequest": {
-                "method": "POST",
+                "method": "DELETE",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "99"
                   ]
                 }
               },
@@ -1707,25 +1888,25 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"message\": \"Account deleted successfully\"\n}"
+              "body": "{\n    \"id\": 99,\n    \"userId\": 2,\n    \"name\": \"Edit 99\",\n    \"type\": \"E_WALLET\",\n    \"balance\": \"10000.00\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\",\n    \"updatedAt\": \"2026-08-05T10:40:00.000Z\"\n}"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "DELETE",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "99"
                   ]
                 }
               },
@@ -1735,7 +1916,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -1744,16 +1925,16 @@
             {
               "name": "404 Not Found - Account Missing",
               "originalRequest": {
-                "method": "POST",
+                "method": "DELETE",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/accounts/999",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "accounts",
+                    "999"
                   ]
                 }
               },
@@ -1763,11 +1944,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Account #99 not found\",\n    \"error\": \"Not Found\"\n}"
+              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Account #999 not found\",\n    \"error\": \"Not Found\"\n}"
             }
           ]
         }
@@ -1782,10 +1963,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Status code is 201 or 200\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
-                ],
-                "type": "text/javascript"
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });"
+                ]
               }
             }
           ],
@@ -1821,15 +2002,23 @@
               "name": "201 Created - Category Created",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"name\": \"Bonus 99\",\n    \"type\": \"INCOME\"\n}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories"
                   ]
                 }
               },
@@ -1839,25 +2028,33 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"id\": 99,\n    \"name\": \"Bonus 99\",\n    \"type\": \"INCOME\"\n}"
+              "body": "{\n    \"id\": 99,\n    \"name\": \"Bonus 99\",\n    \"type\": \"INCOME\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\",\n    \"updatedAt\": \"2026-08-05T10:40:00.000Z\"\n}"
             },
             {
               "name": "400 Bad Request - Validation Error",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories"
                   ]
                 }
               },
@@ -1867,25 +2064,24 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 400,\n    \"message\": [\n        \"name should not be empty\"\n    ],\n    \"error\": \"Bad Request\"\n}"
+              "body": "{\n    \"statusCode\": 400,\n    \"message\": [\n        \"name should not be empty\",\n        \"name must be a string\",\n        \"type must be a valid enum value\",\n        \"type should not be empty\"\n    ],\n    \"error\": \"Bad Request\"\n}"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories"
                   ]
                 }
               },
@@ -1895,7 +2091,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -1909,10 +2105,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
@@ -1933,16 +2129,15 @@
             {
               "name": "200 Success - List Categories",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories"
                   ]
                 }
               },
@@ -1952,25 +2147,24 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "[\n    {\n        \"id\": 99,\n        \"name\": \"Bonus 99\",\n        \"type\": \"INCOME\"\n    }\n]"
+              "body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Gaji Bulanan\",\n        \"type\": \"INCOME\",\n        \"createdAt\": \"2026-05-01T08:00:00.000Z\",\n        \"updatedAt\": \"2026-05-01T08:00:00.000Z\"\n    },\n    {\n        \"id\": 3,\n        \"name\": \"Makanan & Minuman\",\n        \"type\": \"EXPENSE\",\n        \"createdAt\": \"2026-05-01T08:00:00.000Z\",\n        \"updatedAt\": \"2026-05-01T08:00:00.000Z\"\n    }\n]"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories"
                   ]
                 }
               },
@@ -1980,7 +2174,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -1994,10 +2188,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
@@ -2019,16 +2213,16 @@
             {
               "name": "200 Success - Category Detail",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "99"
                   ]
                 }
               },
@@ -2038,25 +2232,25 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"id\": 99,\n    \"name\": \"Bonus 99\",\n    \"type\": \"INCOME\"\n}"
+              "body": "{\n    \"id\": 99,\n    \"name\": \"Bonus 99\",\n    \"type\": \"INCOME\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\",\n    \"updatedAt\": \"2026-08-05T10:40:00.000Z\"\n}"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "99"
                   ]
                 }
               },
@@ -2066,7 +2260,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -2075,16 +2269,16 @@
             {
               "name": "404 Not Found - Category Missing",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories/999",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "999"
                   ]
                 }
               },
@@ -2094,11 +2288,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Category #99 not found\",\n    \"error\": \"Not Found\"\n}"
+              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Category #999 not found\",\n    \"error\": \"Not Found\"\n}"
             }
           ]
         },
@@ -2108,10 +2302,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
@@ -2147,16 +2341,25 @@
             {
               "name": "200 Success - Category Updated",
               "originalRequest": {
-                "method": "POST",
-                "header": [],
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"name\": \"Edit 99\"\n}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "99"
                   ]
                 }
               },
@@ -2166,25 +2369,34 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"id\": 99,\n    \"name\": \"Edit 99\",\n    \"type\": \"INCOME\"\n}"
+              "body": "{\n    \"id\": 99,\n    \"name\": \"Edit 99\",\n    \"type\": \"INCOME\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\",\n    \"updatedAt\": \"2026-08-05T10:40:00.000Z\"\n}"
             },
             {
               "name": "400 Bad Request - Invalid Payload",
               "originalRequest": {
-                "method": "POST",
-                "header": [],
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"name\": 12345\n}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "99"
                   ]
                 }
               },
@@ -2194,7 +2406,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -2203,16 +2415,16 @@
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "PATCH",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "99"
                   ]
                 }
               },
@@ -2222,7 +2434,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -2231,16 +2443,16 @@
             {
               "name": "404 Not Found - Category Missing",
               "originalRequest": {
-                "method": "POST",
+                "method": "PATCH",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories/999",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "999"
                   ]
                 }
               },
@@ -2250,11 +2462,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Category #99 not found\",\n    \"error\": \"Not Found\"\n}"
+              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Category #999 not found\",\n    \"error\": \"Not Found\"\n}"
             }
           ]
         },
@@ -2264,10 +2476,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Status code is 200 or 204\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 204]); });"
-                ],
-                "type": "text/javascript"
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
               }
             }
           ],
@@ -2289,16 +2501,16 @@
             {
               "name": "200 Success - Category Deleted",
               "originalRequest": {
-                "method": "POST",
+                "method": "DELETE",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "99"
                   ]
                 }
               },
@@ -2308,25 +2520,25 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"message\": \"Category deleted successfully\"\n}"
+              "body": "{\n    \"id\": 99,\n    \"name\": \"Edit 99\",\n    \"type\": \"INCOME\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\",\n    \"updatedAt\": \"2026-08-05T10:40:00.000Z\"\n}"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "DELETE",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "99"
                   ]
                 }
               },
@@ -2336,7 +2548,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -2345,16 +2557,16 @@
             {
               "name": "404 Not Found - Category Missing",
               "originalRequest": {
-                "method": "POST",
+                "method": "DELETE",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/categories/999",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "999"
                   ]
                 }
               },
@@ -2364,11 +2576,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Category #99 not found\",\n    \"error\": \"Not Found\"\n}"
+              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Category #999 not found\",\n    \"error\": \"Not Found\"\n}"
             }
           ]
         }
@@ -2384,9 +2596,11 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 201 or 200\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -2400,7 +2614,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"accountId\": 99,\n    \"categoryId\": 99,\n    \"type\": \"EXPENSE\",\n    \"amount\": 50,\n    \"description\": \"Setoran awal 99\"\n}",
+              "raw": "{\n    \"id\": {{baseId}},\n    \"accountId\": {{baseId}},\n    \"categoryId\": {{baseId}},\n    \"type\": \"EXPENSE\",\n    \"amount\": 10,\n    \"description\": \"Setoran awal 99\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2422,15 +2636,23 @@
               "name": "201 Created - Transaction Created",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"accountId\": 3,\n    \"categoryId\": 3,\n    \"type\": \"EXPENSE\",\n    \"amount\": 50000,\n    \"description\": \"Setoran awal 99\"\n}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions"
                   ]
                 }
               },
@@ -2440,25 +2662,33 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"id\": 99,\n    \"accountId\": 99,\n    \"categoryId\": 99,\n    \"amount\": \"50.00\",\n    \"type\": \"EXPENSE\",\n    \"description\": \"Setoran awal 99\"\n}"
+              "body": "{\n    \"id\": 99,\n    \"accountId\": 3,\n    \"categoryId\": 3,\n    \"type\": \"EXPENSE\",\n    \"amount\": \"50000.00\",\n    \"description\": \"Setoran awal 99\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\",\n    \"updatedAt\": \"2026-08-05T10:40:00.000Z\"\n}"
             },
             {
               "name": "400 Bad Request - Insufficient Funds",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"accountId\": 3,\n    \"categoryId\": 3,\n    \"type\": \"EXPENSE\",\n    \"amount\": 999999999,\n    \"description\": \"Pengeluaran terlalu besar\"\n}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions"
                   ]
                 }
               },
@@ -2468,7 +2698,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -2478,15 +2708,23 @@
               "name": "400 Bad Request - DTO Validation",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions"
                   ]
                 }
               },
@@ -2496,25 +2734,24 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 400,\n    \"message\": [\n        \"amount must be a positive number\",\n        \"type must be EXPENSE or INCOME\"\n    ],\n    \"error\": \"Bad Request\"\n}"
+              "body": "{\n    \"statusCode\": 400,\n    \"message\": [\n        \"accountId should not be empty\",\n        \"accountId must be an integer number\",\n        \"categoryId should not be empty\",\n        \"categoryId must be an integer number\",\n        \"type must be a valid enum value\",\n        \"type should not be empty\",\n        \"amount must be a positive number\",\n        \"amount should not be empty\"\n    ],\n    \"error\": \"Bad Request\"\n}"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions"
                   ]
                 }
               },
@@ -2524,7 +2761,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -2534,15 +2771,23 @@
               "name": "404 Not Found - Invalid Account Permission",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"accountId\": 999,\n    \"categoryId\": 3,\n    \"type\": \"EXPENSE\",\n    \"amount\": 5000\n}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions"
                   ]
                 }
               },
@@ -2552,7 +2797,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -2566,10 +2811,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
@@ -2590,16 +2835,15 @@
             {
               "name": "200 Success - List Transactions",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions"
                   ]
                 }
               },
@@ -2609,25 +2853,24 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "[\n    {\n        \"id\": 99,\n        \"accountId\": 99,\n        \"categoryId\": 99,\n        \"amount\": \"50.00\",\n        \"type\": \"EXPENSE\",\n        \"description\": \"Setoran awal 99\"\n    }\n]"
+              "body": "[\n    {\n        \"id\": 1,\n        \"accountId\": 3,\n        \"categoryId\": 1,\n        \"type\": \"INCOME\",\n        \"amount\": \"15000000.00\",\n        \"description\": \"Gaji Bulanan Senior Manager\",\n        \"createdAt\": \"2026-06-27T08:30:00.000Z\",\n        \"updatedAt\": \"2026-06-27T08:30:00.000Z\",\n        \"account\": {\n            \"id\": 3,\n            \"name\": \"Mandiri Utama\"\n        },\n        \"category\": {\n            \"id\": 1,\n            \"name\": \"Gaji Bulanan\"\n        }\n    }\n]"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions"
                   ]
                 }
               },
@@ -2637,7 +2880,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -2651,10 +2894,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
@@ -2676,16 +2919,16 @@
             {
               "name": "200 Success - Transaction Detail",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "99"
                   ]
                 }
               },
@@ -2695,25 +2938,25 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"id\": 99,\n    \"accountId\": 99,\n    \"categoryId\": 99,\n    \"amount\": \"50.00\",\n    \"type\": \"EXPENSE\",\n    \"description\": \"Setoran awal 99\"\n}"
+              "body": "{\n    \"id\": 99,\n    \"accountId\": 3,\n    \"categoryId\": 3,\n    \"type\": \"EXPENSE\",\n    \"amount\": \"50000.00\",\n    \"description\": \"Setoran awal 99\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\",\n    \"updatedAt\": \"2026-08-05T10:40:00.000Z\",\n    \"account\": {\n        \"id\": 3,\n        \"name\": \"Mandiri Utama\"\n    },\n    \"category\": {\n        \"id\": 3,\n        \"name\": \"Makanan & Minuman\"\n    }\n}"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "99"
                   ]
                 }
               },
@@ -2723,7 +2966,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -2732,16 +2975,16 @@
             {
               "name": "404 Not Found - Transaction Missing",
               "originalRequest": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions/999",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "999"
                   ]
                 }
               },
@@ -2751,11 +2994,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Transaction #99 not found\",\n    \"error\": \"Not Found\"\n}"
+              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Transaction #999 not found\",\n    \"error\": \"Not Found\"\n}"
             }
           ]
         },
@@ -2768,7 +3011,9 @@
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -2782,7 +3027,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"amount\": 2000,\n    \"description\": \"Revisi setoran awal\"\n}",
+              "raw": "{\n    \"amount\": 20,\n    \"description\": \"Revisi setoran awal\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2804,16 +3049,25 @@
             {
               "name": "200 Success - Transaction Updated",
               "originalRequest": {
-                "method": "POST",
-                "header": [],
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"amount\": 2000,\n    \"description\": \"Revisi setoran awal\"\n}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "99"
                   ]
                 }
               },
@@ -2823,25 +3077,34 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"id\": 99,\n    \"accountId\": 99,\n    \"amount\": \"2000.00\",\n    \"description\": \"Revisi setoran awal\"\n}"
+              "body": "{\n    \"id\": 99,\n    \"accountId\": 3,\n    \"categoryId\": 3,\n    \"type\": \"EXPENSE\",\n    \"amount\": \"2000.00\",\n    \"description\": \"Revisi setoran awal\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\",\n    \"updatedAt\": \"2026-08-05T10:40:00.000Z\"\n}"
             },
             {
               "name": "400 Bad Request - Validation Error",
               "originalRequest": {
-                "method": "POST",
-                "header": [],
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": ""
+                  "raw": "{\n    \"amount\": -500\n}"
                 },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "99"
                   ]
                 }
               },
@@ -2851,7 +3114,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -2860,16 +3123,16 @@
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "PATCH",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "99"
                   ]
                 }
               },
@@ -2879,7 +3142,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -2888,16 +3151,16 @@
             {
               "name": "404 Not Found - Transaction Missing",
               "originalRequest": {
-                "method": "POST",
+                "method": "PATCH",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions/999",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "999"
                   ]
                 }
               },
@@ -2907,11 +3170,11 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Transaction #99 not found\",\n    \"error\": \"Not Found\"\n}"
+              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Transaction #999 not found\",\n    \"error\": \"Not Found\"\n}"
             }
           ]
         },
@@ -2921,10 +3184,10 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Status code is 200 or 204\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 204]); });"
-                ],
-                "type": "text/javascript"
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
               }
             }
           ],
@@ -2946,16 +3209,16 @@
             {
               "name": "200 Success - Transaction Deleted",
               "originalRequest": {
-                "method": "POST",
+                "method": "DELETE",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "99"
                   ]
                 }
               },
@@ -2965,25 +3228,25 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"message\": \"Transaction deleted successfully\"\n}"
+              "body": "{\n    \"id\": 99,\n    \"accountId\": 3,\n    \"categoryId\": 3,\n    \"type\": \"EXPENSE\",\n    \"amount\": \"2000.00\",\n    \"description\": \"Revisi setoran awal\",\n    \"createdAt\": \"2026-08-05T10:40:00.000Z\",\n    \"updatedAt\": \"2026-08-05T10:40:00.000Z\"\n}"
             },
             {
               "name": "401 Unauthorized",
               "originalRequest": {
-                "method": "POST",
+                "method": "DELETE",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions/99",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "99"
                   ]
                 }
               },
@@ -2993,7 +3256,7 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
@@ -3002,16 +3265,16 @@
             {
               "name": "404 Not Found - Transaction Missing",
               "originalRequest": {
-                "method": "POST",
+                "method": "DELETE",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": ""
-                },
                 "url": {
-                  "raw": "{{deploy-link}}",
+                  "raw": "{{deploy-link}}/transactions/999",
                   "host": [
                     "{{deploy-link}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    "999"
                   ]
                 }
               },
@@ -3021,42 +3284,71 @@
               "header": [
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json; charset=utf-8"
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Transaction #99 not found\",\n    \"error\": \"Not Found\"\n}"
+              "body": "{\n    \"statusCode\": 404,\n    \"message\": \"Transaction #999 not found\",\n    \"error\": \"Not Found\"\n}"
             }
           ]
         }
       ]
     }
   ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
   "variable": [
     {
       "key": "deploy-link",
-      "value": "http://localhost:3000/api",
-      "type": "string"
+      "value": "http://localhost:3000/api"
     },
     {
       "key": "baseUrl",
-      "value": "https://milestone-4-diba15-production.up.railway.app/api",
-      "type": "string"
+      "value": "https://milestone-4-diba15-production.up.railway.app/api"
     },
     {
       "key": "baseId",
-      "value": "99",
-      "type": "string"
+      "value": "99"
     },
     {
       "key": "access_token",
-      "value": "",
-      "type": "string"
+      "value": ""
     },
     {
       "key": "refresh_token",
-      "value": "",
-      "type": "string"
+      "value": ""
     }
   ]
 }
