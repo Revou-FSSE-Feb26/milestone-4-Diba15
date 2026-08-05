@@ -45,7 +45,7 @@ export class AuthController {
     status: 400,
     description: 'Invalid input',
   })
-  async login(@Body() loginDto: LoginDto) {
+  login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
 
@@ -61,16 +61,13 @@ export class AuthController {
     status: 401,
     description: 'Unauthorized',
   })
-  async me(
+  me(
     @Req()
     req: {
       user: { sub: number; email: string; role: Role };
     },
   ) {
-    return {
-      message: 'Get Profile Success',
-      user: await this.authService.me(req.user),
-    };
+    return this.authService.me(req.user);
   }
 
   @Post('logout')

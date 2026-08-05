@@ -78,7 +78,16 @@ export class AuthService {
   }
 
   async me(tempUser: TempUser) {
-    return await this.usersService.findOne(tempUser.sub, tempUser);
+    const user = await this.usersService.findOne(tempUser.sub, tempUser);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    return {
+      message: 'Get Profile Success',
+      user: user,
+    };
   }
 
   async refreshTokens(userId: number, refreshToken: string) {
