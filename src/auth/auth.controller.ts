@@ -67,6 +67,7 @@ export class AuthController {
       user: { sub: number; email: string; role: Role };
     },
   ) {
+    console.log({ user: req.user });
     return this.authService.me(req.user);
   }
 
@@ -103,8 +104,8 @@ export class AuthController {
     description: 'Forbidden: Invalid refresh token',
   })
   refreshToken(@Req() req: { user: { sub: number; refreshToken: string } }) {
-    const userId = req.user.sub;
+    const id = req.user.sub;
     const refreshToken = req.user.refreshToken || '';
-    return this.authService.refreshTokens(userId, refreshToken);
+    return this.authService.refreshTokens(id, refreshToken);
   }
 }

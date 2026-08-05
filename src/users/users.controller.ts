@@ -7,6 +7,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Post,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -16,6 +17,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../generated/prisma/enums';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -60,12 +62,26 @@ export class UsersController {
     status: 404,
     description: 'User not found',
   })
-  @UseGuards(JwtAuthGuard)
   findOne(
     @Req() req: { user: { sub: number; email: string; role: Role } },
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.usersService.findOne(id, req.user);
+  }
+
+  @ApiOperation({ summary: 'Create new user' })
+  @ApiResponse({
+    status: 201,
+    description: 'User Created',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden: Access denied to other user data',
+  })
+  @Roles(Role.ADMIN)
+  @Post()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
   }
 
   @Patch(':id')
@@ -90,13 +106,12 @@ export class UsersController {
     status: 404,
     description: 'User not found',
   })
-  @UseGuards(JwtAuthGuard)
   update(
     @Req() req: { user: { sub: number; email: string; role: Role } },
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.usersService.update(+id, req.user, updateUserDto);
+    return this.usersService.update(id, req.user, updateUserDto);
   }
 
   @Delete(':id')
@@ -117,11 +132,10 @@ export class UsersController {
     status: 404,
     description: 'User not found',
   })
-  @UseGuards(JwtAuthGuard)
   remove(
     @Req() req: { user: { sub: number; email: string; role: Role } },
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.usersService.remove(+id, req.user);
+    return this.usersService.remove(id, req.user);
   }
 }

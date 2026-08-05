@@ -62,14 +62,6 @@ export class UsersService {
     return findUser;
   }
 
-  async findByIdForAuth(id: number) {
-    const user = await this.usersRepository.findForAuth(id);
-
-    if (!user) throw new NotFoundException(`User #${id} not found`);
-
-    return user;
-  }
-
   async update(
     id: number,
     currentUser: TempUser,
@@ -88,15 +80,5 @@ export class UsersService {
     if (!user) throw new NotFoundException('User not found');
 
     return this.usersRepository.remove(id);
-  }
-
-  async updateRefreshToken(userId: number, refreshToken: string | null) {
-    if (refreshToken) {
-      const hash = await bcrypt.hash(refreshToken, 10);
-      await this.usersRepository.update(userId, { refreshToken: hash });
-    } else {
-      // Jika null (Logout), hapus dari database
-      await this.usersRepository.update(userId, { refreshToken: null });
-    }
   }
 }

@@ -38,12 +38,6 @@ export class UsersRepository {
     });
   }
 
-  findForAuth(id: number) {
-    return this.prisma.user.findUnique({
-      where: { id },
-    });
-  }
-
   create(createUserDto: CreateUserDto) {
     return this.prisma.user.create({
       data: createUserDto,
