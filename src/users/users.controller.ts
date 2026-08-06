@@ -6,7 +6,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  Req,
   Post,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -18,6 +17,8 @@ import { Role } from '../generated/prisma/enums';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { CreateUserDto } from './dto/create-user.dto';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import type { AuthUserInterface } from '../common/interfaces/auth-user.interface';
 
 @ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -63,10 +64,10 @@ export class UsersController {
     description: 'User not found',
   })
   findOne(
-    @Req() req: { user: { sub: number; email: string; role: Role } },
+    @CurrentUser() user: AuthUserInterface,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.usersService.findOne(id, req.user);
+    return this.usersService.findOne(id, user);
   }
 
   @ApiOperation({ summary: 'Create new user' })
@@ -107,11 +108,11 @@ export class UsersController {
     description: 'User not found',
   })
   update(
-    @Req() req: { user: { sub: number; email: string; role: Role } },
+    @CurrentUser() user: AuthUserInterface,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.usersService.update(id, req.user, updateUserDto);
+    return this.usersService.update(id, user, updateUserDto);
   }
 
   @Delete(':id')
@@ -133,9 +134,9 @@ export class UsersController {
     description: 'User not found',
   })
   remove(
-    @Req() req: { user: { sub: number; email: string; role: Role } },
+    @CurrentUser() user: AuthUserInterface,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.usersService.remove(id, req.user);
+    return this.usersService.remove(id, user);
   }
 }

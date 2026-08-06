@@ -1,4 +1,3 @@
-// src/auth/guards/roles.guard.ts
 import {
   Injectable,
   CanActivate,
@@ -8,39 +7,34 @@ import {
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { Role } from '../../generated/prisma/enums';
-
-export type JwtPayload = {
-  sub: string;
-  email: string;
-  role: Role;
-};
+import { AuthUserInterface } from '../../common/interfaces/auth-user.interface';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    // 1. Ambil target role dari dekorator @Roles di Controller
+    // Ambil Roles dari dekorator @Roles
     const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
 
-    // 2. Jika route tidak punya dekorator @Roles, berarti route ini bebas diakses (siapa saja)
+    // Jika Roles tidak tersedia berarti backend bisa diakses semua
     if (!requiredRoles) {
       return true;
     }
 
-    // 3. Ambil data user dari request (dihasilkan oleh JwtAuthGuard sebelumnya)
-    const user: JwtPayload = context.switchToHttp().getRequest();
+    // Ambil data user yang dihasilkan oleh JWT Auth Guard
+    const user: AuthUserInterface = context.switchToHttp().getRequest();
 
-    // 4. Jika tidak ada user atau role tidak cocok, lempar error 403 Forbidden
+    // Jika user dan role tidak cocok maka lemparkan error Forbidden access
     if (!user || !requiredRoles.includes(user.role)) {
       throw new ForbiddenException(
         'Akses ditolak: Anda tidak memiliki izin admin',
       );
     }
 
-    return true; // Lolos!
+    return true;
   }
 }
