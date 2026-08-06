@@ -8,13 +8,13 @@ import {
   Post,
   ParseIntPipe,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard)
@@ -37,10 +37,10 @@ export class AccountsController {
     description: 'Unauthorized',
   })
   create(
-    @Req() req: { user: { sub: number } },
+    @CurrentUser('sub') sub: number,
     @Body() createAccountDto: CreateAccountDto,
   ) {
-    return this.accountsService.create(req.user.sub, createAccountDto);
+    return this.accountsService.create(sub, createAccountDto);
   }
 
   @Get()
@@ -53,8 +53,8 @@ export class AccountsController {
     status: 401,
     description: 'Unauthorized',
   })
-  findAll(@Req() req: { user: { sub: number } }) {
-    return this.accountsService.findAll(req.user.sub);
+  findAll(@CurrentUser('sub') sub: number) {
+    return this.accountsService.findAll(sub);
   }
 
   @Get(':id')
@@ -73,9 +73,9 @@ export class AccountsController {
   })
   findOne(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: { user: { sub: number } },
+    @CurrentUser('sub') sub: number,
   ) {
-    return this.accountsService.findOne(id, req.user.sub);
+    return this.accountsService.findOne(id, sub);
   }
 
   @Patch(':id')
@@ -99,9 +99,9 @@ export class AccountsController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAccountDto: UpdateAccountDto,
-    @Req() req: { user: { sub: number } },
+    @CurrentUser('sub') sub: number,
   ) {
-    return this.accountsService.update(id, req.user.sub, updateAccountDto);
+    return this.accountsService.update(id, sub, updateAccountDto);
   }
 
   @Delete(':id')
@@ -120,8 +120,8 @@ export class AccountsController {
   })
   remove(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: { user: { sub: number } },
+    @CurrentUser('sub') sub: number,
   ) {
-    return this.accountsService.remove(id, req.user.sub);
+    return this.accountsService.remove(id, sub);
   }
 }

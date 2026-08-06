@@ -8,14 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { Role } from '../generated/prisma/enums';
 import { AuthRepository } from './auth.repository';
-
-export type TempUser = {
-  sub: number;
-  email: string;
-  role: Role;
-};
 
 @Injectable()
 export class AuthService {
@@ -112,8 +105,8 @@ export class AuthService {
     });
   }
 
-  async me(tempUser: TempUser) {
-    const user = await this.authRepository.me(tempUser.sub);
+  async me(sub: number) {
+    const user = await this.authRepository.me(sub);
 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -146,8 +139,7 @@ export class AuthService {
     const tokens = await this.getTokens(userId, user.email);
 
     //  mengulangi proses hashing refresh token untuk disimpan di db
-    const hashedRefreshToken = await bcrypt.hash(tokens.refreshToken, 10);
-    await this.updateRefreshTokenHash(userId, hashedRefreshToken);
+    await this.updateRefreshTokenHash(userId, tokens.refreshToken);
 
     return tokens;
   }

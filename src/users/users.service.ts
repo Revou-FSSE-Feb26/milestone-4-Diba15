@@ -9,18 +9,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 import * as bcrypt from 'bcrypt';
 import { Role } from '../generated/prisma/enums';
-
-export type TempUser = {
-  sub: number;
-  email: string;
-  role: Role;
-};
+import type { AuthUserInterface } from '../common/interfaces/auth-user.interface';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  private checkOwnership(currentUser: TempUser, targetId: number) {
+  private checkOwnership(currentUser: AuthUserInterface, targetId: number) {
     if (currentUser.role !== Role.ADMIN && currentUser.sub !== targetId) {
       throw new ForbiddenException(
         'Akses ditolak: Anda hanya dapat mengakses data Anda sendiri',
@@ -52,7 +47,7 @@ export class UsersService {
     return this.usersRepository.findAll();
   }
 
-  async findOne(id: number, currentUser: TempUser) {
+  async findOne(id: number, currentUser: AuthUserInterface) {
     this.checkOwnership(currentUser, id);
 
     const findUser = await this.usersRepository.findOne(id);
@@ -64,7 +59,7 @@ export class UsersService {
 
   async update(
     id: number,
-    currentUser: TempUser,
+    currentUser: AuthUserInterface,
     updateUserDto: UpdateUserDto,
   ) {
     const user = await this.findOne(id, currentUser);
@@ -74,7 +69,7 @@ export class UsersService {
     return this.usersRepository.update(id, updateUserDto);
   }
 
-  async remove(id: number, currentUser: TempUser) {
+  async remove(id: number, currentUser: AuthUserInterface) {
     const user = await this.findOne(id, currentUser);
 
     if (!user) throw new NotFoundException('User not found');

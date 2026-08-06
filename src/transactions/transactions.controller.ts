@@ -8,13 +8,13 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard)
@@ -41,10 +41,10 @@ export class TransactionsController {
     description: 'Account not found or invalid permission',
   })
   create(
-    @Req() req: { user: { sub: number } },
+    @CurrentUser('sub') sub: number,
     @Body() createTransactionDto: CreateTransactionDto,
   ) {
-    return this.transactionsService.create(req.user.sub, createTransactionDto);
+    return this.transactionsService.create(sub, createTransactionDto);
   }
 
   @Get()
@@ -57,8 +57,8 @@ export class TransactionsController {
     status: 401,
     description: 'Unauthorized',
   })
-  findAll(@Req() req: { user: { sub: number } }) {
-    return this.transactionsService.findAll(req.user.sub);
+  findAll(@CurrentUser('sub') sub: number) {
+    return this.transactionsService.findAll(sub);
   }
 
   @Get(':id')
@@ -77,9 +77,9 @@ export class TransactionsController {
   })
   findOne(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: { user: { sub: number } },
+    @CurrentUser('sub') sub: number,
   ) {
-    return this.transactionsService.findOne(id, req.user.sub);
+    return this.transactionsService.findOne(id, sub);
   }
 
   @Patch(':id')
@@ -102,14 +102,10 @@ export class TransactionsController {
   })
   update(
     @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('sub') sub: number,
     @Body() updateTransactionDto: UpdateTransactionDto,
-    @Req() req: { user: { sub: number } },
   ) {
-    return this.transactionsService.update(
-      id,
-      req.user.sub,
-      updateTransactionDto,
-    );
+    return this.transactionsService.update(id, sub, updateTransactionDto);
   }
 
   @Delete(':id')
@@ -128,8 +124,8 @@ export class TransactionsController {
   })
   remove(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: { user: { sub: number } },
+    @CurrentUser('sub') sub: number,
   ) {
-    return this.transactionsService.remove(id, req.user.sub);
+    return this.transactionsService.remove(id, sub);
   }
 }

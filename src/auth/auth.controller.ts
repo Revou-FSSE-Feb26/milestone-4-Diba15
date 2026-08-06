@@ -6,7 +6,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { Throttle } from '@nestjs/throttler';
-import { Role } from '../generated/prisma/enums';
+import { CurrentUser } from './decorators/current-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -61,14 +61,9 @@ export class AuthController {
     status: 401,
     description: 'Unauthorized',
   })
-  me(
-    @Req()
-    req: {
-      user: { sub: number; email: string; role: Role };
-    },
-  ) {
-    console.log({ user: req.user });
-    return this.authService.me(req.user);
+  me(@CurrentUser('sub') sub: number) {
+    console.log(sub);
+    return this.authService.me(sub);
   }
 
   @Post('logout')
@@ -83,8 +78,8 @@ export class AuthController {
     status: 401,
     description: 'Unauthorized',
   })
-  logout(@Req() req: { user: { sub: number } }) {
-    return this.authService.logout(req.user.sub);
+  logout(@CurrentUser('sub') sub: number) {
+    return this.authService.logout(sub);
   }
 
   @Post('refresh-token')
@@ -103,9 +98,11 @@ export class AuthController {
     status: 403,
     description: 'Forbidden: Invalid refresh token',
   })
-  refreshToken(@Req() req: { user: { sub: number; refreshToken: string } }) {
-    const id = req.user.sub;
+  refreshToken(
+    @CurrentUser('sub') sub: number,
+    @Req() req: { user: { refreshToken: string } },
+  ) {
     const refreshToken = req.user.refreshToken || '';
-    return this.authService.refreshTokens(id, refreshToken);
+    return this.authService.refreshTokens(sub, refreshToken);
   }
 }
