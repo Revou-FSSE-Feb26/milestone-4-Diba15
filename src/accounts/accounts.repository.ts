@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { AccountsRepositoryInterface } from '../common/interfaces/accounts.repository.interface';
 
 @Injectable()
-export class AccountsRepository {
+export class AccountsRepository implements AccountsRepositoryInterface {
   constructor(private prisma: PrismaService) {}
 
   findAll(userId: number) {

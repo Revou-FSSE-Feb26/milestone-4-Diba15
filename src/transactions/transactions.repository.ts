@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { TransactionsRepositoryInterface } from '../common/interfaces/transactions.repository.interface';
 
 @Injectable()
-export class TransactionsRepository {
+export class TransactionsRepository implements TransactionsRepositoryInterface {
   constructor(private prisma: PrismaService) {}
 
   async findAll(userId: number) {
