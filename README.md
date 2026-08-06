@@ -51,6 +51,14 @@ Logika kalkulasi saldo saat pembuatan/perubahan/penghapusan transaksi dipisahkan
 
 > **Alasan arsitektural:** Memisahkan logika matematika murni dari ketergantungan framework/database sehingga lebih mudah di-unit test secara mandiri.
 
+**SOLID Principles:** 
+
+Pembuatan repository menggunakan pendekatan **Interface** untuk memenuhi prinsip **Interface Segregation**.
+
+**DRY (Don't Repeat Yourself):** 
+
+Pembuatan decorator `@CurrentUser` untuk mengurangi duplikasi kode pada masing-masing controller yang membutuhkan `@Request`.
+
 ---
 
 ## 🛡️ Security & Hardening Features
