@@ -139,8 +139,7 @@ export class AuthService {
     const tokens = await this.getTokens(userId, user.email);
 
     //  mengulangi proses hashing refresh token untuk disimpan di db
-    const hashedRefreshToken = await bcrypt.hash(tokens.refreshToken, 10);
-    await this.updateRefreshTokenHash(userId, hashedRefreshToken);
+    await this.updateRefreshTokenHash(userId, tokens.refreshToken);
 
     return tokens;
   }
