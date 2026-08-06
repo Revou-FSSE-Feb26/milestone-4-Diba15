@@ -9,6 +9,10 @@ import { ROLES_KEY } from '../decorators/roles.decorator';
 import { Role } from '../../generated/prisma/enums';
 import { AuthUserInterface } from '../../common/interfaces/auth-user.interface';
 
+export interface CurrentUserInterface extends Request {
+  user?: AuthUserInterface;
+}
+
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
@@ -26,7 +30,8 @@ export class RolesGuard implements CanActivate {
     }
 
     // Ambil data user yang dihasilkan oleh JWT Auth Guard
-    const user: AuthUserInterface = context.switchToHttp().getRequest();
+    const req: CurrentUserInterface = context.switchToHttp().getRequest();
+    const user = req.user;
 
     // Jika user dan role tidak cocok maka lemparkan error Forbidden access
     if (!user || !requiredRoles.includes(user.role)) {

@@ -62,7 +62,6 @@ export class AuthController {
     description: 'Unauthorized',
   })
   me(@CurrentUser('sub') sub: number) {
-    console.log(sub);
     return this.authService.me(sub);
   }
 

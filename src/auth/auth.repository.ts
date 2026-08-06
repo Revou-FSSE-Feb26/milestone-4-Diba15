@@ -29,7 +29,15 @@ export class AuthRepository implements AuthRepositoryInterface {
   }
 
   register(data: RegisterDto) {
-    return this.prisma.user.create({ data });
+    return this.prisma.user.create({
+      data: data,
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        accounts: true,
+      },
+    });
   }
 
   me(userId: number) {

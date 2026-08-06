@@ -9,6 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { AuthRepository } from './auth.repository';
+import { Role } from '../generated/prisma/enums';
 
 @Injectable()
 export class AuthService {
@@ -21,18 +22,19 @@ export class AuthService {
    * Helper method untuk generate access token dan refresh token
    * @param userId
    * @param email
+   * @param role
    */
-  async getTokens(userId: number, email: string) {
+  async getTokens(userId: number, email: string, role: Role) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
-        { sub: userId, email },
+        { sub: userId, email, role },
         {
           secret: process.env.JWT_SECRET || 'SECRET_KEY_SEMENTARA',
           expiresIn: '15m',
         },
       ),
       this.jwtService.signAsync(
-        { sub: userId, email },
+        { sub: userId, email, role },
         {
           secret: process.env.JWT_REFRESH_SECRET || 'RAHASIA_NEGARA_REFRESH',
           expiresIn: '7d',
@@ -73,7 +75,7 @@ export class AuthService {
     }
 
     // Generate token
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.role);
 
     // Hash refresh token dan menyimpan di database untuk proses refresh token
     const hashedRefreshToken = await bcrypt.hash(tokens.refreshToken, 10);
@@ -136,7 +138,7 @@ export class AuthService {
     }
 
     // Generate token baru
-    const tokens = await this.getTokens(userId, user.email);
+    const tokens = await this.getTokens(userId, user.email, user.role);
 
     //  mengulangi proses hashing refresh token untuk disimpan di db
     await this.updateRefreshTokenHash(userId, tokens.refreshToken);
