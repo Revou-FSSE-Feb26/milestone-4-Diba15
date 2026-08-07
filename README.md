@@ -14,7 +14,57 @@ Dokumentasi backend untuk Fintrack yang mencakup fitur pengelolaan Categories, T
 
 ---
 
-## 🚀 How to Run (Local Setup)
+## How to Run PostgreSQL with DBeaver (Local Setup)
+
+**0. Install PostgreSQL**
+
+[Download PostgreSQL](https://www.postgresql.org/download/)
+
+- Download & Install sesuai petunjuk.
+
+**1. Download & Install DBeaver**
+
+[Download DBeaver](https://dbeaver.io/)
+
+- Download DBeaver Community
+- Install sesuai dengan petunjuk yang ada.
+
+**2. Create New Database**
+
+- Klik kanan pada tab connection pada DBeaver
+- Pada Create pilih Connection
+- Setelah itu pilih SQL, lalu pilih PostgreSQL dan klik next.
+- Ubah Host jika memiliki deployed database, jika tidak tidak perlu diubah
+- Ubah nama database sesuai dengan database yang akan dibuat, jika tidak biarkan saja.
+- Tentukan Username dan password sesuai dengan PostgreSQL yang sebelumnya di install.
+- Jika sudah klik test connection untuk testing koneksi dan test apakah driver sudah di install di DBeaver.
+- Jika belum ada driver DBeaver akan menampilkan modal untuk install driver PostgreSQL
+- Jika sudah klik finish.
+
+**3. Create Table**
+
+- Pilih database yang akan dibuat
+- Klik kanan pada tab connection pada DBeaver
+- Pilih SQL editor dan pilih Open SQL Script
+- Copy SQL yang ada di `db/schema.sql`
+- Paste SQL tersebut ke DBeaver
+- Klik Execute (tombol kertas dengan icon play di sebelah kiri). Atau klik Alt+X.
+
+**4. Seed Table**
+
+- Copy SQL yang ada di `db/seed.sql`
+- Paste SQL tersebut ke DBeaver
+- Klik Execute (tombol kertas dengan icon play di sebelah kiri). Atau klik Alt+X.
+
+**5. Test Query**
+
+- Copy SQL yang ada di `db/queries.sql`
+- Paste SQL tersebut ke DBeaver
+- Klik Execute (tombol kertas dengan icon play di sebelah kiri). Atau klik Alt+X.
+
+---
+
+## How to Run (Local Setup)
 
 **1. Install Dependencies**
 
